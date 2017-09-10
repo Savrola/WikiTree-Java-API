@@ -89,6 +89,7 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
                     WikiTreePersonProfile basePersonProfile = new WikiTreePersonProfile(
                             requestType,
                             jsonBasePerson,
+                            WikiTreePersonProfile.ProfileType.RELATIVE,
                             "person"
                     );
 

@@ -419,7 +419,12 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
             // The instructor invoked here requires that the profile have a "Name" field.
             // This is why we forced it into the list of requested fields above.
 
-            return new WikiTreePersonProfile( null, optRval.get(), "person" );
+            return new WikiTreePersonProfile(
+                    null,
+                    optRval.get(),
+                    "*".equals( fields ) ? WikiTreePersonProfile.ProfileType.PRIMARY_PERSON : WikiTreePersonProfile.ProfileType.OTHER,
+                    "person"
+            );
 
         } else {
 

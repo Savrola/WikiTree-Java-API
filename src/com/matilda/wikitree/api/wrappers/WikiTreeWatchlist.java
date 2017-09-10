@@ -89,7 +89,7 @@ public class WikiTreeWatchlist extends WikiTreeWrapper {
             if ( profileObject instanceof JSONObject ) {
 
                 JSONObject profileJsonObject = (JSONObject)profileObject;
-                WikiTreePersonProfile profile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, profileJsonObject );
+                WikiTreePersonProfile profile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, profileJsonObject, WikiTreePersonProfile.ProfileType.PROFILE );
 
                 _thisBatch.add( profile );
 

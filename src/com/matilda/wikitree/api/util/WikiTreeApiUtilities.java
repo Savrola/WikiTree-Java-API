@@ -6,6 +6,7 @@ package com.matilda.wikitree.api.util;
 
 import com.matilda.wikitree.api.WikiTreeApiClient;
 import com.matilda.wikitree.api.exceptions.ReallyBadNewsError;
+import com.matilda.wikitree.api.wrappers.WikiTreePersonProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
@@ -18,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  Useful utility methods.
@@ -32,6 +35,11 @@ public class WikiTreeApiUtilities {
      */
 
     public static final SortedSet<String> S_ALL_GET_PERSON_FIELDS_SET;
+    public static final Pattern WIKITREE_ID_NAME_PATTERN = Pattern.compile( ".*-\\d+" );
+    //    public static final Pattern NUMERIC_ID_PATTERN = Pattern.compile( "\\d\\d*" );
+    public static final Pattern SPACE_NAME_PATTERN = Pattern.compile( "Space:..*" );
+
+    public static final SortedMap<String, GetRelatives> RELATIVE_GETTERS;
 
     static {
 
@@ -71,7 +79,25 @@ public class WikiTreeApiUtilities {
                 "Manager"
         );
 
+        SortedMap<String,GetRelatives> relativeKeys = new TreeMap<>();
+
+        relativeKeys.put( "Children", ( paramName, personProfile ) -> personProfile.getChildren() );
+        relativeKeys.put( "Siblings", ( paramName, personProfile ) -> personProfile.getSiblings() );
+        relativeKeys.put( "Spouses", ( paramName, personProfile ) -> personProfile.getSpouses() );
+        relativeKeys.put( "Parents", ( paramName, personProfile ) -> personProfile.getParents() );
+
+        RELATIVE_GETTERS = Collections.unmodifiableSortedMap( relativeKeys );
+
         S_ALL_GET_PERSON_FIELDS_SET = Collections.unmodifiableSortedSet( tmpSet );
+
+    }
+
+    private interface GetRelatives {
+
+        Collection<WikiTreePersonProfile> getRelatives(
+                String paramName,
+                final WikiTreePersonProfile personProfile
+        );
 
     }
 
@@ -257,6 +283,70 @@ public class WikiTreeApiUtilities {
     }
 
     /**
+     Determine if a string represents a value which can be used as a Space.Id or a Person.Id.
+     <p/>Note that this method doesn't really have anything to do with WikITree Ids. It should probably find a better home.
+     @param numericIdString the id string.
+     @return {@code true} if the specified id string yields a positive value when parsed using {@link Long#parseLong(String)};
+     {@code false} otherwise.
+     */
+
+    public static boolean isValidNumericIdString( @NotNull String numericIdString ) {
+
+        try {
+
+            long id = Long.parseLong( numericIdString );
+
+            return id > 0;
+
+        } catch ( NumberFormatException e ) {
+
+            return false;
+
+        }
+
+    }
+
+    /**
+     Determine if a string contains a valid WikiTree ID Name.
+     A valid WikiTree ID Name is defined as a string which is not a valid WikiTree Space name
+     (does not consist of {@code "Space:"} followed by at least one additional character)
+     and does contain a sequence of one or more characters followed by a minus sign followed by one or more digits.
+     This is a rather loose definition but it does eliminate anything which is not a valid WikiTree ID Name.
+     @param wikiTreeIdName the proposed WikiTree ID Name.
+     @return {@code true} if the string satisfies the above definition of a valid WikiTree ID Name; {@code false} otherwise.
+     */
+
+    public static boolean isValidWikiTreeIdPersonName( @NotNull String wikiTreeIdName ) {
+
+        if ( isValidWikiTreeSpaceName( wikiTreeIdName ) ) {
+
+            return false;
+
+        } else {
+
+            Matcher mWikiTreeName = WIKITREE_ID_NAME_PATTERN.matcher( wikiTreeIdName );
+            return mWikiTreeName.matches();
+
+        }
+
+    }
+
+    /**
+     Determine if a string contains a valid WikiTree Space Name.
+     An string which starts with {@code "Space:"} and contains at least one additional character is considered to be
+     a WikiTree Space Name.
+     @param spaceWikiTreeId the proposed WikiTree Space Name.
+     @return {@code true} if the string starts with {@code "Space:"} and contains at least one additional character; {@code false} otherwise.
+     */
+
+    public static boolean isValidWikiTreeSpaceName( @NotNull String spaceWikiTreeId ) {
+
+        Matcher mSpaceName = SPACE_NAME_PATTERN.matcher( spaceWikiTreeId );
+        return mSpaceName.matches();
+
+    }
+
+    /**
      Manage pretty printing with a particular emphasis on making it easy to emit commas in all the right places.
      */
 
@@ -386,6 +476,15 @@ public class WikiTreeApiUtilities {
                 _lastOutputLine.append( ',' );
 
             }
+
+        }
+
+        public String toString() {
+
+            return "PrettyLineManager( " +
+                   "lastOutputLine=" + enquoteForJavaString( String.valueOf( _lastOutputLine ) ) + ", " +
+                   "currentOutputLine=" + enquoteForJavaString( String.valueOf( _currentOutputLine ) ) +
+                   " )";
 
         }
 
@@ -702,23 +801,21 @@ public class WikiTreeApiUtilities {
         }
 
         plm.append( repl( INDENT_STRING, indent ) );
+        if ( iThing instanceof WikiTreePersonProfile ) {
+
+            plm.append( ((WikiTreePersonProfile)iThing).getProfileType() ).append( " " );
+
+        }
+
         if ( name != null ) {
+
+            if ( "5584".equals( name ) ) {
+                WikiTreeApiUtilities.doNothing();
+            }
 
             plm.append( enquoteForJavaString( name ) ).append( " : " );
 
         }
-
-//        Object iThing;
-//        if ( thing instanceof Optional ) {
-//
-//            Optional optThing = (Optional)thing;
-//            iThing = optThing.isPresent() ? optThing.get() : null;
-//
-//        } else {
-//
-//            iThing = thing;
-//
-//        }
 
         if ( iThing == null ) {
 
@@ -746,7 +843,29 @@ public class WikiTreeApiUtilities {
 
                 if ( paramName instanceof String ) {
 
-                    prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), map.get( paramName ), plm );
+                    Object paramValue = map.get( paramName );
+
+                    // If we are printing the relatives in a WTPP instance then use the getters in that class
+                    // so that we print the wrapped relatives' profiles instead of the raw profiles.
+                    //
+                    // THe primary benefit of this in the immediate sense is that the code above which prefixes WTPP instances
+                    // with their profile type will properly prefix these relatives' instances. There is a potential secondary
+                    // benefit should we insert more special handling of WTPP instances in this set of pretty-printing methods.
+
+                    if ( iThing instanceof WikiTreePersonProfile && RELATIVE_GETTERS.containsKey( paramName ) ) {
+
+//                        System.out.println( "dealing with " + ( (String)paramName ).toLowerCase() );
+                        GetRelatives getter = RELATIVE_GETTERS.get( paramName );
+                        Collection<WikiTreePersonProfile> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
+                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), relatives, plm );
+
+                        WikiTreeApiUtilities.doNothing();
+
+                    } else {
+
+                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
+
+                    }
 
 //		} else {
 //

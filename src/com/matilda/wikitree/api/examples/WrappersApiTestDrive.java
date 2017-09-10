@@ -41,6 +41,12 @@ public class WrappersApiTestDrive {
                     churchillPersonByWikiTreeID
             );
 
+            WikiTreePersonProfile marigoldChurchillPersonByWikiTreeID = request.getPerson( new WikiTreeId( "Churchill-9" ) );
+            WikiTreeApiUtilities.prettyPrintJsonThing(
+                    "Winston S. Churchill's daughter Marigold's person instance (died very young; no spouse or children)",
+                    marigoldChurchillPersonByWikiTreeID
+            );
+
             WikiTreePersonProfile churchillPersonById = request.getPerson( 5589 );
             WikiTreeApiUtilities.prettyPrintJsonThing(
                     "Churchill's person instance by Person.Id",

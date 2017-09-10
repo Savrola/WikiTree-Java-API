@@ -23,6 +23,37 @@ import java.util.function.Supplier;
 @SuppressWarnings({ "unused", "WeakerAccess" })
 public class WikiTreePersonProfile extends WikiTreeProfile {
 
+    /**
+     Specify what type of request yielded this profile.
+     */
+
+    public enum ProfileType {
+
+        /**
+         The target person of a {@code getPerson} request that asked all fields ("*").
+         */
+
+        PRIMARY_PERSON,
+
+        /**
+         The relative of a {@link #PRIMARY_PERSON} obtained via the request that got the primary person and their relatives.
+         */
+
+        RELATIVE,
+
+        /**
+         A person profile returned by a {@code getProfile} or a {@code getPersonProfile} request that asked for all fields ("*").
+         */
+
+        PROFILE,
+
+        /**
+         Any other profile.
+         */
+
+        OTHER
+    }
+
     private static final SortedMap<String, WikiTreeApiClient.BiologicalGender> s_genderMap;
 
     static {
@@ -34,42 +65,46 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     private WikiTreeApiClient.BiologicalGender _gender = null;
-
     private WikiTreePersonProfile _biologicalFather;
-    private WikiTreePersonProfile _biologicalMother;
 
+    private WikiTreePersonProfile _biologicalMother;
     private Collection<WikiTreePersonProfile> _parents = new LinkedList<>();
     private Collection<WikiTreePersonProfile> _spouses = new LinkedList<>();
     private Collection<WikiTreePersonProfile> _children = new LinkedList<>();
+
     private Collection<WikiTreePersonProfile> _siblings = new LinkedList<>();
 
     private Long _personId;
 
+    private final ProfileType _profileType;
+
     /**
      Create a person profile for the person described by the specified JSON object.
 
-     @param requestType     the type of request to the WikiTree API server that got us this profile.
-     If not {@code null} then this generally means that the profile was part of a larger response (for example, it might be one of the potentially
-     many profiles returned by a {@link WikiTreeApiWrappersSession#getWatchlist(Boolean, Boolean, Boolean, Boolean, String, Integer, Integer, String)} call).
-     If {@code null} then this is generally the entire response from a request to the WikiTree API server (for example, the result of calling
-     {@link WikiTreeApiWrappersSession#getProfile(WikiTreeId)} for a person's profile).
-     @param jsonObject      the specified JSON object.
-     @param profileLocation a varargs series of {@link String} values (or an array of {@link String} values) indicating the path to where
-     in {@code jsonObject} we should expect to find the actual person profile. If no vararg values are provided (or {@code profileLocation} is an empty array)
-     then {@code jsonObject} is expected to be the person profile object.
-     Note that you will be the not-so-proud recipient of
-     a {@link ReallyBadNewsError} unchecked exception if the actual person profile is not where you said it was.
      @throws ReallyBadNewsError if any of the following are true:
      <ol>
      <li>no vararg values are provided (or {@code profileLocation} is an empty array) and {@code jsonObject}
      is not the actual person profile object</li><li>there is nothing in {@code jsonObject} at the specified path location</li>
      <li>the search down the specified path location yields a {@code null} value before we get to the end of the path.</li>
      </ol>
+      @param requestType     the type of request to the WikiTree API server that got us this profile.
+      If not {@code null} then this generally means that the profile was part of a larger response (for example, it might be one of the potentially
+      many profiles returned by a {@link WikiTreeApiWrappersSession#getWatchlist(Boolean, Boolean, Boolean, Boolean, String, Integer, Integer, String)} call).
+      If {@code null} then this is generally the entire response from a request to the WikiTree API server (for example, the result of calling
+      {@link WikiTreeApiWrappersSession#getProfile(WikiTreeId)} for a person's profile).
+     @param jsonObject      the specified JSON object.
+     @param profileType
+     @param profileLocation a varargs series of {@link String} values (or an array of {@link String} values) indicating the path to where
+     in {@code jsonObject} we should expect to find the actual person profile. If no vararg values are provided (or {@code profileLocation} is an empty array)
+     then {@code jsonObject} is expected to be the person profile object.
+     Note that you will be the not-so-proud recipient of
+     a {@link ReallyBadNewsError} unchecked exception if the actual person profile is not where you said it was.
      */
 
     public WikiTreePersonProfile(
-            @Nullable WikiTreeRequestType requestType,
-            @NotNull JSONObject jsonObject,
+            final @Nullable WikiTreeRequestType requestType,
+            final @NotNull JSONObject jsonObject,
+            final @NotNull ProfileType profileType,
             String... profileLocation
     ) throws WikiTreeRequestFailedException {
 
@@ -97,6 +132,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         }
 
+        _profileType = profileType;
+
         if ( !containsKey( "Id" ) ) {
 
             throw new ReallyBadNewsError( "WTPP does not have a Person.Id:  " + this );
@@ -121,10 +158,11 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         }
 
-        _parents.addAll( getPeople( this, "Parents" ) );
-        _children.addAll( getPeople( this, "Children" ) );
-        _spouses.addAll( getPeople( this, "Spouses" ) );
-        _siblings.addAll( getPeople( this, "Siblings" ) );
+        ProfileType relativeProfileType = profileType == ProfileType.PRIMARY_PERSON ? ProfileType.RELATIVE : ProfileType.OTHER;
+        _parents.addAll( getPeople( this, relativeProfileType, "Parents" ) );
+        _children.addAll( getPeople( this, relativeProfileType, "Children" ) );
+        _spouses.addAll( getPeople( this, relativeProfileType, "Spouses" ) );
+        _siblings.addAll( getPeople( this, relativeProfileType, "Siblings" ) );
 
         // See if we can figure out who this person's father and mother are.
         // If there is more than one male parent or more than one female parent then we remember the first one that we found and grumble about the rest.
@@ -225,6 +263,12 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     }
 
+    public ProfileType getProfileType() {
+
+        return _profileType;
+
+    }
+
     /**
      Get the person profiles of all relatives of the primary person within a particular class.
 
@@ -234,7 +278,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      */
 
     @NotNull
-    public static Collection<WikiTreePersonProfile> getPeople( JSONObject profileObject, String relationship )
+    private static Collection<WikiTreePersonProfile> getPeople( JSONObject profileObject, ProfileType profileType, String relationship )
             throws WikiTreeRequestFailedException {
 
         Collection<WikiTreePersonProfile> rval = new LinkedList<>();
@@ -267,7 +311,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             if ( personProfileObj instanceof JSONObject ) {
 
                 JSONObject personProfileJsonObject = (JSONObject)personProfileObj;
-                WikiTreePersonProfile personProfile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, personProfileJsonObject );
+                WikiTreePersonProfile personProfile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, personProfileJsonObject, profileType );
                 rval.add( personProfile );
 
             }

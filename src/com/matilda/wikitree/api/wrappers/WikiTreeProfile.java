@@ -104,7 +104,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
             Object isPersonObj = profile.get( "IsPerson" );
             if ( isPersonObj instanceof Number ? ( (Number)isPersonObj ).longValue() == 1L : "1".equals( isPersonObj ) ) {
 
-                WikiTreePersonProfile personProfile = new WikiTreePersonProfile( null, jsonObject, "profile" );
+                WikiTreePersonProfile personProfile = new WikiTreePersonProfile( null, jsonObject, WikiTreePersonProfile.ProfileType.PROFILE, "profile" );
 
                 rval = personProfile;
 

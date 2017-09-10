@@ -98,7 +98,12 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
 
             if ( ancestorObject instanceof JSONObject ) {
 
-                WikiTreePersonProfile ancestorProfile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, (JSONObject)ancestorObject );
+                WikiTreePersonProfile ancestorProfile = new WikiTreePersonProfile(
+                        WikiTreeRequestType.UNKNOWN,
+                        (JSONObject)ancestorObject,
+                        WikiTreePersonProfile.ProfileType.PROFILE
+                );
+
                 _resultAncestors.add( ancestorProfile );
 
             } else {

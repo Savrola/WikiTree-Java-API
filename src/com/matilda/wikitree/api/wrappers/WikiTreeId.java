@@ -8,9 +8,6 @@ import com.matilda.wikitree.api.exceptions.ReallyBadNewsError;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  Represent a WikiTree ID as a class rather than as a string to make it harder to pass junk as WikiTree ID parameters.
  <p/>A WikiTree ID is defined as either:
@@ -47,20 +44,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("WeakerAccess")
 public class WikiTreeId implements Comparable<WikiTreeId> {
 
-//    public enum Kind {
-//        PERSON_NAME,
-//        NUMERIC,
-//        SPACE_NAME
-//    }
-
-//    public static final Pattern WIKITREE_ID_NAME_PATTERN = Pattern.compile( "([wW][iI][dD]=)?(.*-\\d\\d*)" );
-//    private static final Pattern NUMERIC_ID_PATTERN = Pattern.compile( "([pPsS][iI][dD]=)?(\\d\\d*)" );
-//    private static final Pattern SPACE_NAME_PATTERN = Pattern.compile( "([sS][nN][aA][mM][eE]=)?(Space:..*)" );
-
-    public static final Pattern WIKITREE_ID_NAME_PATTERN = Pattern.compile( ".*-\\d\\d*" );
-//    public static final Pattern NUMERIC_ID_PATTERN = Pattern.compile( "\\d\\d*" );
-    public static final Pattern SPACE_NAME_PATTERN = Pattern.compile( "Space:..*" );
-
     @NotNull
     private final String _wikiTreeIdString;
     private final boolean _isIdName;
@@ -78,13 +61,8 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
         }
 
-        boolean isName = isValidWikiTreeIdPersonName( wikiTreeIdString );
-//        boolean isNumericId = isValidNumericIdString( wikiTreeIdString );
-        boolean isSpaceName = isValidWikiTreeSpaceName( wikiTreeIdString );
-
-//        Matcher mNumber = NUMERIC_ID_PATTERN.matcher( wikiTreeIdString );
-//        Matcher mWikiTreeName = WIKITREE_ID_NAME_PATTERN.matcher( wikiTreeIdString );
-//        Matcher mSpaceName = SPACE_NAME_PATTERN.matcher( wikiTreeIdString );
+        boolean isName = WikiTreeApiUtilities.isValidWikiTreeIdPersonName( wikiTreeIdString );
+        boolean isSpaceName = WikiTreeApiUtilities.isValidWikiTreeSpaceName( wikiTreeIdString );
 
         if ( isName && isSpaceName ) {
 
@@ -107,42 +85,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
         _isIdName = isName;
 
-//        _isSpaceName = wikiTreeIdString.startsWith( "Space:" );
-//        if ( _isSpaceName ) {
-//
-//            _wikiTreeIdString = wikiTreeIdString;
-//
-//            _isWikiTreeStyleName = true;
-//
-//            return;
-//
-//        }return
-
         _wikiTreeIdString = wikiTreeIdString;
-
-//        if (isName ) {
-//
-////            _wikiTreeIdString = mWikiTreeName.group( 2 );
-//            _kind = Kind.PERSON_NAME;
-//
-//        } else if ( isNumericId ) {
-//
-////            _wikiTreeIdString = mNumber.group( 2 );
-//            _kind = Kind.NUMERIC;
-//
-//        } else if ( isSpaceName ) {
-//
-////            _wikiTreeIdString = mSpaceName.group( 2 );
-//            _kind = Kind.SPACE_NAME;
-//
-//        } else {
-//
-//            throw new IllegalArgumentException(
-//                    "WikiTreeId:  " + WikiTreeApiUtilities.enquoteForJavaString( wikiTreeIdString ) +
-//                    " does not look like either a WikiTreeId-style person name, space name or numeric id"
-//            );
-//
-//        }
 
     }
 
@@ -150,82 +93,6 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
     public String getName() {
 
         return _wikiTreeIdString;
-//        if ( isPersonName() || isSpaceName() ) {
-//
-//            return _wikiTreeIdString;
-//
-//        } else {
-//
-//            throw new IllegalArgumentException(
-//                    "WikiTreeId.getWikiTreeStyleName:  " + WikiTreeApiUtilities.enquoteForJavaString( _wikiTreeIdString ) +
-//                    " is not a WikiTreeId-style person or space name"
-//            );
-//
-//        }
-
-    }
-
-    /**
-     Determine if a string represents a value which can be used as a Space.Id or a Person.Id.
-     <p/>Note that this method doesn't really have anything to do with WikITree Ids. It should probably find a better home.
-     @param numericIdString the id string.
-     @return {@code true} if the specified id string yields a positive value when parsed using {@link Long#parseLong(String)};
-     {@code false} otherwise.
-     */
-
-    public static boolean isValidNumericIdString( String numericIdString ) {
-
-        try {
-
-            long id = Long.parseLong( numericIdString );
-
-            return id > 0;
-
-        } catch ( NumberFormatException e ) {
-
-            return false;
-
-        }
-
-    }
-
-    /**
-     Determine if a string contains a valid WikiTree ID Name.
-     A valid WikiTree ID Name is defined as a string which is not a valid WikiTree Space name
-     (does not consist of {@code "Space:"} followed by at least one additional character)
-     and does contain a sequence of one or more characters followed by a minus sign followed by one or more digits.
-     This is a rather loose definition but it does eliminate anything which is not a valid WikiTree ID Name.
-     @param wikiTreeIdName the proposed WikiTree ID Name.
-     @return {@code true} if the string satisfies the above definition of a valid WikiTree ID Name; {@code false} otherwise.
-     */
-
-    public static boolean isValidWikiTreeIdPersonName( String wikiTreeIdName ) {
-
-        if ( isValidWikiTreeSpaceName( wikiTreeIdName ) ) {
-
-            return false;
-
-        } else {
-
-            Matcher mWikiTreeName = WIKITREE_ID_NAME_PATTERN.matcher( wikiTreeIdName );
-            return mWikiTreeName.matches();
-
-        }
-
-    }
-
-    /**
-     Determine if a string contains a valid WikiTree Space Name.
-     An string which starts with {@code "Space:"} and contains at least one additional character is considered to be
-     a WikiTree Space Name.
-     @param spaceWikiTreeId the proposed WikiTree Space Name.
-     @return {@code true} if the string starts with {@code "Space:"} and contains at least one additional character; {@code false} otherwise.
-     */
-
-    public static boolean isValidWikiTreeSpaceName( String spaceWikiTreeId ) {
-
-        Matcher mSpaceName = SPACE_NAME_PATTERN.matcher( spaceWikiTreeId );
-        return mSpaceName.matches();
 
     }
 
@@ -272,50 +139,6 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
     }
 
-//    public Kind getKind() {
-//
-//        return _kind;
-//
-//    }
-//
-//    public boolean isPersonName() {
-//
-//        return _kind == Kind.PERSON_NAME;
-//
-//    }
-//
-//    public boolean isNumericId() {
-//
-//        return _kind == Kind.NUMERIC;
-//
-//    }
-
-//    /**
-//     Determine if this instance encapsulate the name of a WikiTree space.
-//
-//     @return {@code true} if this instance encapsulates the name of a WikiTree space (i.e. it is a string that starts with {@code "Space:"}).
-//     {@code false} otherwise.
-//     */
-//
-//    public boolean isSpaceName() {
-//
-//        return _kind == Kind.SPACE_NAME;
-//
-//    }
-//
-//    /**
-//     Get this instance's value as an integer.
-//
-//     @return this instance's value as an integer.
-//     @throws NumberFormatException if this instance's value string cannot be parsed as a positive integer.
-//     */
-//
-//    public long getNumericId() {
-//
-//        return Long.parseLong( _wikiTreeIdString );
-//
-//    }
-
     /**
      Get this instance's value string.
 
@@ -326,16 +149,6 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
     public String getValueString() {
 
         return _wikiTreeIdString;
-
-        //        if ( _wikiTreeIdString.startsWith( "Id=" ) ) {
-//
-//            return _wikiTreeIdString.substring( 3 );
-//
-//        } else {
-//
-//            return _wikiTreeIdString;
-//
-//        }
 
     }
 
