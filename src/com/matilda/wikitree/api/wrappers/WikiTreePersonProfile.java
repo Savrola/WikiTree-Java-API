@@ -15,6 +15,8 @@ import org.json.simple.JSONObject;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  A WikiTree person profile.
@@ -22,6 +24,48 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({ "unused", "WeakerAccess" })
 public class WikiTreePersonProfile extends WikiTreeProfile {
+
+    public static final String BIRTH_DATE = "BirthDate";
+    public static final String BIRTH_DATE_DECADE = "BirthDateDecade";
+    public static final String BIRTH_LOCATION = "BirthLocation";
+    public static final String BIRTH_NAME = "BirthName";
+    public static final String BIRTH_NAME_PRIVATE = "BirthNamePrivate";
+    public static final String CHILDREN = "Children";
+    public static final String DEATH_DATE = "DeathDate";
+    public static final String DEATH_LOCATION = "DeathLocation";
+    public static final String FATHER = "Father";
+    public static final String FIRST_NAME = "FirstName";
+    public static final String GENDER = "Gender";
+    public static final String HAS_CHILDREN = "HasChildren";
+    public static final String ID = "Id";
+    public static final String IS_LIVING = "IsLiving";
+    public static final String LAST_NAME_AT_BIRTH = "LastNameAtBirth";
+    public static final String LAST_NAME_CURRENT = "LastNameCurrent";
+    public static final String LAST_NAME_OTHER = "LastNameOther";
+    public static final String LONG_NAME = "LongName";
+    public static final String LONG_NAME_PRIVATE = "LongNamePrivate";
+    public static final String MANAGER = "MANAGER";
+    public static final String MARRIAGE_DATE = "marriage_date";
+    public static final String MARRIAGE_LOCATION = "marriage_location";
+    public static final String MIDDLE_NAME = "MiddleName";
+    public static final String MOTHER = "Mother";
+    public static final String NAME = "Name";
+    public static final String NICKNAMES = "Nicknames";
+    public static final String NO_CHILDREN = "1";
+    public static final String PARENTS = "Parents";
+    public static final String PHOTO = "Photo";
+    public static final String PREFIX = "Prefix";
+    public static final String PRIVACY_IS_AT_LEAST_PUBLIC = "Privacy_IsAtLeastPublic";
+    public static final String PRIVACY_IS_OPEN = "Privacy_IsOpen";
+    public static final String PRIVACY_IS_PRIVATE = "Privacy_IsPrivate";
+    public static final String PRIVACY_IS_SEMI_PRIVATE_BIO = "Privacy_IsSemiPrivateBio";
+    public static final String PRIVACY_IS_SEMI_PRIVATE = "Privacy_IsSemiPrivate";
+    public static final String PRIVACY = "Privacy";
+    public static final String REAL_NAME = "RealName";
+    public static final String SHORT_NAME = "ShortName";
+    public static final String SIBLINGS = "Siblings";
+    public static final String SPOUSES = "Spouses";
+    public static final String SUFFIX = "Suffix";
 
     /**
      Specify what type of request yielded this profile.
@@ -81,30 +125,31 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     /**
      Create a person profile for the person described by the specified JSON object.
 
+     @param requestType     the type of request to the WikiTree API server that got us this profile.
+     If not {@code null} then this generally means that the profile was part of a larger response (for example, it might be one of the potentially
+     many profiles returned by a {@link WikiTreeApiWrappersSession#getWatchlist(Boolean, Boolean, Boolean, Boolean, String, Integer, Integer, String)} call).
+     If {@code null} then this is generally the entire response from a request to the WikiTree API server (for example, the result of calling
+     {@link WikiTreeApiWrappersSession#getProfile(WikiTreeId)} for a person's profile).
+     @param jsonObject      the specified JSON object.
+     @param profileType     what kind of profile is this
+     ({@link ProfileType#PRIMARY_PERSON}, {@link ProfileType#RELATIVE}, {@link ProfileType#PROFILE}, {@link ProfileType#OTHER}).
+     @param profileLocation a varargs series of {@link String} values (or an array of {@link String} values) indicating the path to where
+     in {@code jsonObject} we should expect to find the actual person profile. If no vararg values are provided (or {@code profileLocation} is an empty array)
+     then {@code jsonObject} is expected to be the person profile object.
+     Note that you will be the not-so-proud recipient of
+     a {@link ReallyBadNewsError} unchecked exception if the actual person profile is not where you said it was.
      @throws ReallyBadNewsError if any of the following are true:
      <ol>
      <li>no vararg values are provided (or {@code profileLocation} is an empty array) and {@code jsonObject}
      is not the actual person profile object</li><li>there is nothing in {@code jsonObject} at the specified path location</li>
      <li>the search down the specified path location yields a {@code null} value before we get to the end of the path.</li>
      </ol>
-      @param requestType     the type of request to the WikiTree API server that got us this profile.
-      If not {@code null} then this generally means that the profile was part of a larger response (for example, it might be one of the potentially
-      many profiles returned by a {@link WikiTreeApiWrappersSession#getWatchlist(Boolean, Boolean, Boolean, Boolean, String, Integer, Integer, String)} call).
-      If {@code null} then this is generally the entire response from a request to the WikiTree API server (for example, the result of calling
-      {@link WikiTreeApiWrappersSession#getProfile(WikiTreeId)} for a person's profile).
-     @param jsonObject      the specified JSON object.
-     @param profileType
-     @param profileLocation a varargs series of {@link String} values (or an array of {@link String} values) indicating the path to where
-     in {@code jsonObject} we should expect to find the actual person profile. If no vararg values are provided (or {@code profileLocation} is an empty array)
-     then {@code jsonObject} is expected to be the person profile object.
-     Note that you will be the not-so-proud recipient of
-     a {@link ReallyBadNewsError} unchecked exception if the actual person profile is not where you said it was.
      */
 
     public WikiTreePersonProfile(
-            final @Nullable WikiTreeRequestType requestType,
-            final @NotNull JSONObject jsonObject,
-            final @NotNull ProfileType profileType,
+            @Nullable final WikiTreeRequestType requestType,
+            @NotNull final JSONObject jsonObject,
+            @NotNull final ProfileType profileType,
             String... profileLocation
     ) throws WikiTreeRequestFailedException {
 
@@ -134,13 +179,13 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         _profileType = profileType;
 
-        if ( !containsKey( "Id" ) ) {
+        if ( get( ID ) == null ) {
 
             throw new ReallyBadNewsError( "WTPP does not have a Person.Id:  " + this );
 
         }
 
-        if ( !containsKey( "Name" ) ) {
+        if ( get( NAME ) == null ) {
 
             throw new ReallyBadNewsError( "WTPP does not have a Name:  " + this );
 
@@ -148,7 +193,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         // Make sure that what we saved is actually a profile.
 
-        if ( !containsKey( "IsLiving" ) ) {
+        if ( get( IS_LIVING ) == null ) {
 
             //noinspection unchecked
             throw new ReallyBadNewsError(
@@ -159,10 +204,10 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         }
 
         ProfileType relativeProfileType = profileType == ProfileType.PRIMARY_PERSON ? ProfileType.RELATIVE : ProfileType.OTHER;
-        _parents.addAll( getPeople( this, relativeProfileType, "Parents" ) );
-        _children.addAll( getPeople( this, relativeProfileType, "Children" ) );
-        _spouses.addAll( getPeople( this, relativeProfileType, "Spouses" ) );
-        _siblings.addAll( getPeople( this, relativeProfileType, "Siblings" ) );
+        _parents.addAll( getPeople( this, relativeProfileType, PARENTS ) );
+        _children.addAll( getPeople( this, relativeProfileType, CHILDREN ) );
+        _spouses.addAll( getPeople( this, relativeProfileType, SPOUSES ) );
+        _siblings.addAll( getPeople( this, relativeProfileType, SIBLINGS ) );
 
         // See if we can figure out who this person's father and mother are.
         // If there is more than one male parent or more than one female parent then we remember the first one that we found and grumble about the rest.
@@ -210,8 +255,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             }
 
         }
-
-//	System.out.println( "WikiTree ID of new profile is \"" + getWikiTreeId() + "\"" );
 
     }
 
@@ -287,17 +330,14 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         Collection values;
         if ( relativesObj instanceof JSONObject ) {
 
-//	    System.out.println( relationship + " are in an object" );
             values = ( (JSONObject)relativesObj ).values();
 
         } else if ( relativesObj instanceof JSONArray ) {
 
-//	    System.out.println( relationship + " are in an array" );
             values = ( (JSONArray)relativesObj );
 
         } else if ( relativesObj == null ) {
 
-//	    System.out.println( "no " + relationship.toLowerCase() );
             values = new LinkedList();
 
         } else {
@@ -317,8 +357,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             }
 
         }
-
-//	System.out.println( "got the " + rval.size() + " " + relationship.toLowerCase() );
 
         return rval;
 
@@ -349,12 +387,12 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      does not guarantee that the ancestral trees actually contain all the ancestors provided by its WikiTree API's {@code getAncestors} request
      (ensuring that the tree has no loops may force it to leave out such ancestors).
 
-     @return this instance's biological father; {@code null} if unknown to this instance (not the same thing as unknown to WikiTree).
+     @return this instance's biological father if it is known to this instance (not the same thing as known to WikiTree).
      */
 
-    public WikiTreePersonProfile getBiologicalFather() {
+    public Optional<WikiTreePersonProfile> getBiologicalFather() {
 
-        return _biologicalFather;
+        return Optional.ofNullable( _biologicalFather );
 
     }
 
@@ -378,12 +416,12 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      Get this instance's biological mother.
      <p/>This information
 
-     @return this instance's biological mother; {@code null} if unknown to this instance (not the same thing as unknown to WikiTree).
+     @return this instance's biological mother if it is known to this instance (not the same thing as known to WikiTree).
      */
 
-    public WikiTreePersonProfile getBiologicalMother() {
+    public Optional<WikiTreePersonProfile> getBiologicalMother() {
 
-        return _biologicalMother;
+        return Optional.ofNullable( _biologicalMother );
 
     }
 
@@ -433,7 +471,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         if ( _personId == null ) {
 
-            Object personIdObj = get( "Id" );
+            Object personIdObj = get( ID );
             if ( personIdObj == null ) {
 
                 _personId = -1L;
@@ -477,7 +515,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public WikiTreeId getWikiTreeId() {
 
-        Object wikiTreeIdObj = get( "Name" );
+        Object wikiTreeIdObj = get( NAME );
         if ( wikiTreeIdObj == null ) {
 
             return new WikiTreeId( "Id=" + getPersonId() );
@@ -506,7 +544,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public Object getMandatoryValue( @NotNull String jsonKey ) {
 
-        Object obj = get( jsonKey );
+        @SuppressWarnings("UnnecessaryLocalVariable") Object obj = get( jsonKey );
 
         return obj;
 
@@ -517,6 +555,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         Optional<Object> optRval = getOptionalValue( jsonKey );
 
+        //noinspection unchecked
         return (T)optRval.orElseGet( alternative );
 
     }
@@ -530,70 +569,141 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getShortName() {
 
+        @SuppressWarnings("UnnecessaryLocalVariable")
         String nameObj = getValue(
-                "ShortName",
+                SHORT_NAME,
                 () -> WikiTreePersonProfile.this.getWikiTreeId().getValueString()
         );
 
         return nameObj;
 
-//        if ( nameObj instanceof String ) {
-//
-//            return (String)nameObj;
-//
-//        } else {
-//
-//            ReallyBadNewsError e = new ReallyBadNewsError(
-//                    "WikiTreePersonProfile.getShortName:  short name is a " + nameObj.getClass().getCanonicalName() + " equal to " + nameObj
-//            );
-//
-//            throw e;
-//
-//        }
+    }
+
+    /**
+     Get the person's long name.
+
+     @return the person's long name. If the person has no long name then the person's short name via {@link #getShortName()}.
+     */
+
+    @NotNull
+    public String getLongName() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String nameObj = getValue(
+                LONG_NAME,
+                () -> getShortName()
+        );
+
+        return nameObj;
+
+    }
+
+    /**
+     Does this person actually have a first name?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasFirstName() {
+
+        Object s = get( FIRST_NAME );
+        return s != null && !((String)s).trim().isEmpty();
 
     }
 
     /**
      Get the person's first name.
 
-     @return an {@code Optional<String>} containing the person's first name if they have one or {@code Optional.empty()} if they don't.
+     @return the person's first name if they have one; their short name otherwise.
      */
 
     @NotNull
     public String getFirstName() {
 
+        @SuppressWarnings("UnnecessaryLocalVariable")
         String firstName = getValue(
-                "FirstName",
+                FIRST_NAME,
                 this::getShortName
         );
 
         return firstName;
 
-//        if ( nameObj instanceof String ) {
-//
-//            return (String)nameObj;
-//
-//        } else {
-//
-//            throw new ReallyBadNewsError(
-//                    "WikiTreePersonProfile.getShortName:  short name is a " + nameObj.getClass().getCanonicalName() + " equal to " + nameObj
-//            );
-//
-//        }
-//        Object nameObj = get( "ShortName" );
-//        if ( nameObj == null ) {
-//
-//            return Optional.empty();
-//
-//        } else if ( nameObj instanceof String ) {
-//
-//            return Optional.of( (String)nameObj );
-//
-//        } else {
-//
-//            throw new ReallyBadNewsError( "WikiTreePersonProfile.getFirstName:  first name is neither null or a String; it's a " +
-//                                          nameObj.getClass().getCanonicalName() + " equal to " + nameObj );
-//        }
+    }
+
+    /**
+     Does this person have a marriage date (probably only happens in spouse records that hang off person records)?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasMarriageDate() {
+
+        Object s = get( MARRIAGE_DATE );
+        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+
+    }
+
+    /**
+     Get the person's marriage date.
+
+     @return the date that this person was married (probably only happens in spouse records that hang off person records).
+     @throws IllegalArgumentException if there is no marriage date (see {@link #hasMarriageDate()} for a way to avoid this).
+     */
+
+    @NotNull
+    public String getMarriageDate() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String marriageDate = (String)getMandatoryValue( MARRIAGE_DATE );
+
+        return marriageDate;
+
+    }
+
+    /**
+     Does this person have a marriage location (probably only happens in spouse records that hang off person records)?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasMarriageLocation() {
+
+        Object s = get( MARRIAGE_LOCATION );
+        return s != null && !((String)s).trim().isEmpty();
+
+    }
+
+    /**
+     Get the person's marriage location.
+
+     @return the location where this person was married (probably only happens in spouse records that hang off person records).
+     @throws IllegalArgumentException if there is no marriage location (see {@link #hasMarriageDate()} for a way to avoid this).
+     */
+
+    @NotNull
+    public String getMarriageLocation() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String marriageDate = (String)getMandatoryValue( MARRIAGE_LOCATION );
+
+        return marriageDate;
+
+    }
+
+    /**
+     Get the person's last name.
+
+     @return the person's last name at birth.
+     */
+
+    @NotNull
+    public String getLastNameAtBirth() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String lastNameAtBirth = (String)getMandatoryValue( LAST_NAME_AT_BIRTH );
+//                getValue(
+//                LAST_NAME_AT_BIRTH,
+//                this::getShortName
+//        );
+
+        return lastNameAtBirth;
 
     }
 
@@ -610,7 +720,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
             _gender = WikiTreeApiClient.BiologicalGender.UNKNOWN;
 
-            Object genderObj = get( "Gender" );
+            Object genderObj = get( GENDER );
             if ( genderObj instanceof String ) {
 
                 WikiTreeApiClient.BiologicalGender g = s_genderMap.get( genderObj );
@@ -631,6 +741,116 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         }
 
         return _gender;
+
+    }
+
+    /**
+     Does this person have a birth location?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasBirthLocation() {
+
+        Object s = get( BIRTH_LOCATION );
+        return s != null && !((String)s).trim().isEmpty();
+
+    }
+
+    /**
+     Get the person's birth location.
+     @return the person's birth location.
+     @throws IllegalArgumentException if they don't have a birth location (see {@link #hasBirthLocation} for a way around this).
+     */
+
+    @NotNull
+    public String getBirthLocation() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String birthLocation = (String)getMandatoryValue( BIRTH_LOCATION );
+
+        return birthLocation;
+
+    }
+
+    /**
+     Does this person have a birth date?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasBirthDate() {
+
+        Object s = get( BIRTH_DATE );
+        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+
+    }
+
+    /**
+     Get the person's birth date.
+     @return whatever happens to be in the database (obviously not good enough but this is method is a work in progress right now).
+     @throws IllegalArgumentException if they don't have a birth date (see {@link #hasBirthDate} for a way around this).
+     */
+
+    public String getBirthDate() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String birthDate = (String)getMandatoryValue( BIRTH_DATE );
+
+        return birthDate;
+
+    }
+
+    /**
+     Does this person have a death date?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasDeathDate() {
+
+        Object s = get( DEATH_DATE );
+        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+
+    }
+
+    /**
+     Get the person's death date.
+     @return whatever happens to be in the database (obviously not good enough but this is method is a work in progress right now).
+     @throws IllegalArgumentException if they don't have a birth date (see {@link #hasBirthDate} for a way around this).
+     */
+
+    public String getDeathDate() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String deathDate = (String)getMandatoryValue( DEATH_DATE );
+
+        return deathDate;
+
+    }
+
+    /**
+     Does this person have a death location?
+     @return {@code true} if they do; {@code false} if they don't.
+     */
+
+    public boolean hasDeathLocation() {
+
+        Object s = get( DEATH_LOCATION );
+        return s != null && !((String)s).trim().isEmpty();
+
+    }
+
+    /**
+     Get the person's death location.
+     @return the person's death location.
+     @throws IllegalArgumentException if they don't have a death location (see {@link #hasDeathLocation} for a way around this).
+     */
+
+    @NotNull
+    public String getDeathLocation() {
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        String deathLocation = (String)getMandatoryValue( DEATH_LOCATION );
+
+        return deathLocation;
 
     }
 
@@ -664,9 +884,9 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
                   append( " ( gender:" ).
                   append( genderString ).
                   append( ", birthDate:" ).
-                  append( WikiTreeApiUtilities.cleanupStringDate( get( "BirthDate" ) ) ).
+                  append( WikiTreeApiUtilities.cleanupStringDate( get( BIRTH_DATE ) ) ).
                   append( ", deathDate:" ).
-                  append( WikiTreeApiUtilities.cleanupStringDate( get( "DeathDate" ) ) ).
+                  append( WikiTreeApiUtilities.cleanupStringDate( get( DEATH_DATE ) ) ).
                   append( " )" ).
                   append( " )" );
 

@@ -6,6 +6,7 @@ package com.matilda.wikitree.api.util;
 
 import com.matilda.wikitree.api.WikiTreeApiClient;
 import com.matilda.wikitree.api.exceptions.ReallyBadNewsError;
+import com.matilda.wikitree.api.exceptions.WikiTreeLoginRequestFailedException;
 import com.matilda.wikitree.api.wrappers.WikiTreePersonProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1021,7 +1022,7 @@ public class WikiTreeApiUtilities {
      if you're on a Unix or Mac OS X system and as {@code C:\Users\YourWindowsName} if you're on a Windows 10 system.
      */
 
-    public static void maybeLoginToWikiTree( WikiTreeApiClient apiClient, String[] args ) {
+    public static void maybeLoginToWikiTree( WikiTreeApiClient apiClient, String[] args ) throws WikiTreeLoginRequestFailedException {
 
         if ( args.length == 0 ) {
 
@@ -1043,9 +1044,11 @@ public class WikiTreeApiUtilities {
 
             if ( !userInfoFileName.endsWith( ".wtu" ) ) {
 
-                System.err.println( "WikiTree user info file specified on the command line does not have a \".wtu\" suffix - bailing out" );
+                throw new WikiTreeLoginRequestFailedException(
+                        "WikiTree user info file specified on the command line does not have a \".wtu\" suffix - bailing out",
+                        WikiTreeLoginRequestFailedException.Reason.INVALID_WTU_FILENAME
+                );
 
-                System.exit( 1 );
             }
 
             System.out.println( "using WikiTree user info file at " + userInfoFileName );
@@ -1057,9 +1060,10 @@ public class WikiTreeApiUtilities {
                 String userName = lnr.readLine();
                 if ( userName == null ) {
 
-                    System.out.flush();
-                    System.err.println( "user info file \"" + userInfoFileName + "\" is empty" );
-                    System.exit( 1 );
+                    throw new WikiTreeLoginRequestFailedException(
+                            "user info file \"" + userInfoFileName + "\" is empty",
+                            WikiTreeLoginRequestFailedException.Reason.MISSING_USERNAME
+                    );
 
                 }
                 userName = userName.trim();
@@ -1067,57 +1071,64 @@ public class WikiTreeApiUtilities {
                 String password = lnr.readLine();
                 if ( password == null ) {
 
-                    System.out.flush();
-                    System.err.println( "user info file \"" +
-                                        userInfoFileName +
-                                        "\" only has one line (first line must be an email address; second line must be WikiTree password for that email address)" );
-                    System.exit( 1 );
+                    throw new WikiTreeLoginRequestFailedException(
+                            "user info file \"" + userInfoFileName +
+                            "\" only has one line (first line must be an email address; second line must be WikiTree password for that email address)",
+                            WikiTreeLoginRequestFailedException.Reason.MISSING_PASSWORD
+                    );
 
                 }
 
                 boolean loginResponse = apiClient.login( userName, password );
                 if ( !loginResponse ) {
 
-                    System.out.flush();
-                    System.err.println( "unable to create authenticated session for \"" +
-                                        userName +
-                                        "\" (probably incorrect user name or incorrect password; could be network problems or maybe even an invasion of space aliens)" );
-                    System.err.flush();
-                    System.out.println( "first line of " + userInfoFileName + " must contain the email address that you use to login to WikiTree" );
-                    System.out.println( "second line of " + userInfoFileName + " must contain the WikiTree password for that email address" );
-                    System.out.println( "leading or trailing whitespace on the email line is ignored" );
-                    System.out.println( "IMPORTANT:  leading or trailing whitespace on the password line is NOT ignored" );
-                    System.out.flush();
-                    System.exit( 1 );
+                    throw new WikiTreeLoginRequestFailedException(
+                            "unable to create authenticated session for \"" + userName + "\"",
+                            WikiTreeLoginRequestFailedException.Reason.AUTHENTICATION_FAILED
+                    );
+//                                        "\" (probably incorrect user name or incorrect password; could be network problems or maybe even an invasion of space aliens)" );
+//                    System.err.flush();
+//                    System.out.println( "first line of " + userInfoFileName + " must contain the email address that you use to login to WikiTree" );
+//                    System.out.println( "second line of " + userInfoFileName + " must contain the WikiTree password for that email address" );
+//                    System.out.println( "leading or trailing whitespace on the email line is ignored" );
+//                    System.out.println( "IMPORTANT:  leading or trailing whitespace on the password line is NOT ignored" );
+//                    System.out.flush();
+//                    System.exit( 1 );
 
                 }
 
             } catch ( FileNotFoundException e ) {
 
-                System.out.flush();
-                System.err.println( "unable to open user info file - " + e.getMessage() );
-                System.exit( 1 );
+                throw new WikiTreeLoginRequestFailedException(
+                        "unable to open user info file - " + e.getMessage(),
+                        WikiTreeLoginRequestFailedException.Reason.CAUGHT_EXCEPTION,
+                        e
+                );
 
             } catch ( ParseException e ) {
 
-                System.out.flush();
-                System.err.println( "unable to parse response from server (probably a bug; notify danny@matilda.com)" );
-                e.printStackTrace();
-                System.exit( 1 );
+                throw new WikiTreeLoginRequestFailedException(
+                        "unable to parse response from server (probably a bug; notify danny@matilda.com)",
+                        WikiTreeLoginRequestFailedException.Reason.CAUGHT_EXCEPTION,
+                        e
+                );
 
             } catch ( IOException e ) {
 
-                System.out.flush();
-                System.err.println( "something went wrong in i/o land" );
-                e.printStackTrace();
-                System.exit( 1 );
+                throw new WikiTreeLoginRequestFailedException(
+                        "something went wrong in i/o land",
+                        WikiTreeLoginRequestFailedException.Reason.CAUGHT_EXCEPTION,
+                        e
+                );
 
             }
 
         } else {
 
-            System.err.println( "you must specify either no parameter or one parameter" );
-            System.exit( 1 );
+            throw new WikiTreeLoginRequestFailedException(
+                    "you must specify either no parameter or one parameter",
+                    WikiTreeLoginRequestFailedException.Reason.TOO_MANY_ARGUMENTS
+            );
 
         }
 

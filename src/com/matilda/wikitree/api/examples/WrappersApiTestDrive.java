@@ -5,6 +5,7 @@
 package com.matilda.wikitree.api.examples;
 
 import com.matilda.wikitree.api.exceptions.ReallyBadNewsError;
+import com.matilda.wikitree.api.exceptions.WikiTreeLoginRequestFailedException;
 import com.matilda.wikitree.api.exceptions.WikiTreeRequestFailedException;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import com.matilda.wikitree.api.wrappers.*;
@@ -26,14 +27,14 @@ public class WrappersApiTestDrive {
 
         WikiTreeApiWrappersSession request = new WikiTreeApiWrappersSession();
 
-        // Login using the info in the authentication file specified on the command line.
-        // First line contains the email address associated with your WikiTree account
-        // and the second line contains that account's WikiTree password.
-        // If there is no file specified on the command line then
-
-        WikiTreeApiUtilities.maybeLoginToWikiTree( request, args );
-
         try {
+
+            // Login using the info in the authentication file specified on the command line.
+            // First line contains the email address associated with your WikiTree account
+            // and the second line contains that account's WikiTree password.
+            // If there is no file specified on the command line then
+
+            WikiTreeApiUtilities.maybeLoginToWikiTree( request, args );
 
             WikiTreePersonProfile churchillPersonByWikiTreeID = request.getPerson( new WikiTreeId( "Churchill-4" ) );
             WikiTreeApiUtilities.prettyPrintJsonThing(
@@ -138,14 +139,29 @@ public class WrappersApiTestDrive {
 
             System.out.println( "done" );
 
-        } catch ( IllegalArgumentException | ReallyBadNewsError | IOException |ParseException | WikiTreeRequestFailedException e ) {
+        } catch (
+                IllegalArgumentException |
+                ReallyBadNewsError |
+                IOException |
+                ParseException |
+                WikiTreeRequestFailedException e
+        ) {
 
+            System.out.flush();
             e.printStackTrace();
 
             doNothing();
 
+        } catch ( WikiTreeLoginRequestFailedException e ) {
+
+            System.out.flush();
+            System.err.println( "login failed (reason=" + e.getReason() );
+
+            e.printStackTrace();
+
         } catch ( Throwable e ) {
 
+            System.out.flush();
             System.err.println( "totally unexpected exception:  " + e );
             e.printStackTrace();
 

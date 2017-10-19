@@ -4,6 +4,7 @@
 
 package com.matilda.wikitree.api.examples;
 
+import com.matilda.wikitree.api.exceptions.WikiTreeLoginRequestFailedException;
 import com.matilda.wikitree.api.exceptions.WikiTreeRequestFailedException;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import com.matilda.wikitree.api.wrappers.*;
@@ -23,34 +24,34 @@ public class VerySimpleWrappersApiExample {
 
         WikiTreeApiWrappersSession session = new WikiTreeApiWrappersSession();
 
-        // Login to the API server.
-        //
-        // ###### If you don't have a WikiTree account then just comment out the maybeLoginToWikiTree call below.
-        // ###### Other than that you won't get a watchlist (it will be empty), everything should work since this example uses public profiles.
-        //
-        // The first line of the specified file must contain the email address of a WikiTree user account.
-        // The second line must contain the WikiTree password for that account.
-        //
-        // Note that if a .wtu file is specified, as it is here, then any failure at all results in our JVM exiting.
-        // This includes but is not limited to:
-        //    - the .wtu file not existing
-        //    - the .two file not having the correct contents (see above)
-        //    - incorrect password
-        //    - trouble in network-land
-        //
-        // ###### If you don't have a WikiTree account then just comment out the maybeLoginToWikiTree call below.
-        // ###### Other than that you won't get a watchlist (it will be empty), everything should work since this example uses public profiles.
-
-        WikiTreeApiUtilities.maybeLoginToWikiTree( session, new String[]{ ".wikiTreeUserInfo.wtu" } );
-
-        // Let's see who owns the session.
-
-        WikiTreeApiUtilities.printAuthenticatedSessionUserInfo( session );
-
-        // The rest of this involves at least some calls which can throw exceptions our way.
-        // We'll just catch them and print out a stack traceback.
-
         try {
+
+            // Login to the API server.
+            //
+            // ###### If you don't have a WikiTree account then just comment out the maybeLoginToWikiTree call below.
+            // ###### Other than that you won't get a watchlist (it will be empty), everything should work since this example uses public profiles.
+            //
+            // The first line of the specified file must contain the email address of a WikiTree user account.
+            // The second line must contain the WikiTree password for that account.
+            //
+            // Note that if a .wtu file is specified, as it is here, then any failure at all results in our JVM exiting.
+            // This includes but is not limited to:
+            //    - the .wtu file not existing
+            //    - the .two file not having the correct contents (see above)
+            //    - incorrect password
+            //    - trouble in network-land
+            //
+            // ###### If you don't have a WikiTree account then just comment out the maybeLoginToWikiTree call below.
+            // ###### Other than that you won't get a watchlist (it will be empty), everything should work since this example uses public profiles.
+
+            WikiTreeApiUtilities.maybeLoginToWikiTree( session, new String[]{ ".wikiTreeUserInfo.wtu" } );
+
+            // Let's see who owns the session.
+
+            WikiTreeApiUtilities.printAuthenticatedSessionUserInfo( session );
+
+            // The rest of this involves at least some calls which can throw exceptions our way.
+            // We'll just catch them and print out a stack traceback.
 
             // Let's exercise each of the types of requests.
 
@@ -99,6 +100,13 @@ public class VerySimpleWrappersApiExample {
 
         } catch ( IOException | ParseException | WikiTreeRequestFailedException e ) {
 
+            System.out.flush();
+            e.printStackTrace();
+
+        } catch ( WikiTreeLoginRequestFailedException e ) {
+
+            System.out.flush();
+            System.err.println( "login failed (reason=" + e.getReason() + ")" );
             e.printStackTrace();
 
         }

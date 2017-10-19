@@ -276,29 +276,31 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
             String chopped = fullIndentString.substring( 0, fullIndentString.length() - INDENT_PER_LEVEL );
             String replaced =
                     chopped + EMPTY_INDENT + NONEMPTY_INDENT;
+            Optional<WikiTreePersonProfile> optBiologicalFather = profile.getBiologicalFather();
+            Optional<WikiTreePersonProfile> optBiologicalMother = profile.getBiologicalMother();
             if ( goingLeft ) {
 
-                printAncestralTree( ps, true, replaced, "F", profile.getBiologicalFather() );
+                printAncestralTree( ps, true, replaced, "F", optBiologicalFather.orElse( null ) );
                 printLine(
                         ps,
                         chopped + HANGER + role + " - " + profile.getShortName() +
                         " (" + WikiTreeApiUtilities.cleanupStringDate( profile.get( "BirthDate" ) ) + "," +
                         WikiTreeApiUtilities.cleanupStringDate( profile.get( "DeathDate" ) ) + ")"
                 );
-                printAncestralTree( ps, false, fullIndentString + NONEMPTY_INDENT, "M", profile.getBiologicalMother() );
+                printAncestralTree( ps, false, fullIndentString + NONEMPTY_INDENT, "M", optBiologicalMother.orElse( null ) );
                 printLine( ps, fullIndentString );
 
             } else {
 
                 printLine( ps, fullIndentString );
-                printAncestralTree( ps, true, fullIndentString + NONEMPTY_INDENT, "F", profile.getBiologicalFather() );
+                printAncestralTree( ps, true, fullIndentString + NONEMPTY_INDENT, "F", optBiologicalFather.orElse( null ) );
                 printLine(
                         ps,
                         chopped + HANGER + role + " - " + profile.getShortName() +
                         " (" + WikiTreeApiUtilities.cleanupStringDate( profile.get( "BirthDate" ) ) + "," +
                         WikiTreeApiUtilities.cleanupStringDate( profile.get( "DeathDate" ) ) + ")"
                 );
-                printAncestralTree( ps, false, replaced, "M", profile.getBiologicalMother() );
+                printAncestralTree( ps, false, replaced, "M", optBiologicalMother.orElse( null ) );
 
             }
 

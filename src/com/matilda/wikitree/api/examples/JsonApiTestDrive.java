@@ -4,6 +4,7 @@
 
 package com.matilda.wikitree.api.examples;
 
+import com.matilda.wikitree.api.exceptions.WikiTreeLoginRequestFailedException;
 import com.matilda.wikitree.api.jsonclient.WikiTreeApiJsonSession;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import com.matilda.wikitree.api.wrappers.WikiTreeId;
@@ -25,14 +26,14 @@ public class JsonApiTestDrive {
 
         WikiTreeApiJsonSession request = new WikiTreeApiJsonSession();
 
-        // Login using the info in the authentication file specified on the command line.
-        // First line contains the email address associated with your WikiTree account
-        // and the second line contains that account's WikiTree password.
-        // If there is no file specified on the command line then
-
-        WikiTreeApiUtilities.maybeLoginToWikiTree( request, args );
-
         try {
+
+            // Login using the info in the authentication file specified on the command line.
+            // First line contains the email address associated with your WikiTree account
+            // and the second line contains that account's WikiTree password.
+            // If there is no file specified on the command line then
+
+            WikiTreeApiUtilities.maybeLoginToWikiTree( request, args );
 
             // Public person with parents, spouse and multiple children.
 
@@ -143,7 +144,7 @@ public class JsonApiTestDrive {
 
             return;
 
-        } catch ( IOException | ParseException e ) {
+        } catch ( IOException | ParseException | WikiTreeLoginRequestFailedException e ) {
 
             e.printStackTrace();
 
