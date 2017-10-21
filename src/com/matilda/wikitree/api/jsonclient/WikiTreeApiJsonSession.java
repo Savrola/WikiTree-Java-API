@@ -975,7 +975,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
 //				for ( String cookie : _loginCookies ) {
 //
-//				    System.out.println( "cookie:  " + WikiTreeApiUtilities.enquoteForJavaString( cookie ) );
+//				    System.out.println( "cookie:  " + WikiTreeApiUtilities.enquoteJavaString( cookie ) );
 //
 //				}
 //
@@ -1079,6 +1079,12 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     public static StatisticsAccumulator getTimingStats() {
 
         return s_innerRequestStats;
+
+    }
+
+    public String toString() {
+
+        return "WikiTreeApiJsonSession()";
 
     }
 

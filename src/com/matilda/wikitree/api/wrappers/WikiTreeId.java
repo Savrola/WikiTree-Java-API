@@ -67,7 +67,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
         if ( isName && isSpaceName ) {
 
             throw new ReallyBadNewsError(
-                    "WikiTreeId:  " + WikiTreeApiUtilities.enquoteForJavaString( wikiTreeIdString ) +
+                    "WikiTreeId:  " + WikiTreeApiUtilities.enquoteJavaString( wikiTreeIdString ) +
                     " looks like both a WikiTreeId Name and a Space name " +
                     "(this is a bug; please email this entire message to danny@matilda.com)"
             );
@@ -77,7 +77,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
         if ( !isName && !isSpaceName ) {
 
             throw new IllegalArgumentException(
-                    "WikiTreeId:  " + WikiTreeApiUtilities.enquoteForJavaString( wikiTreeIdString ) +
+                    "WikiTreeId:  " + WikiTreeApiUtilities.enquoteJavaString( wikiTreeIdString ) +
                     " is neither a WikiTreeId Name or a WikiTree Space Name"
             );
 

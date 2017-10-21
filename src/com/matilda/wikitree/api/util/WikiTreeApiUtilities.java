@@ -483,8 +483,8 @@ public class WikiTreeApiUtilities {
         public String toString() {
 
             return "PrettyLineManager( " +
-                   "lastOutputLine=" + enquoteForJavaString( String.valueOf( _lastOutputLine ) ) + ", " +
-                   "currentOutputLine=" + enquoteForJavaString( String.valueOf( _currentOutputLine ) ) +
+                   "lastOutputLine=" + enquoteJavaString( String.valueOf( _lastOutputLine ) ) + ", " +
+                   "currentOutputLine=" + enquoteJavaString( String.valueOf( _currentOutputLine ) ) +
                    " )";
 
         }
@@ -609,7 +609,7 @@ public class WikiTreeApiUtilities {
      @return the enquoted string or the four character string {@code "null"} if the supplied parameter is null.
      */
 
-    public static String enquoteForJavaString( String string ) {
+    public static String enquoteJavaString( String string ) {
 
         if ( string == null ) {
 
@@ -690,7 +690,7 @@ public class WikiTreeApiUtilities {
     /**
      Pretty-print onto {@link System#out} anything which might appear in a {@link JSONArray} or {@link JSONObject}.
      <p/>{@link JSONArray} and {@link JSONObject} instances get the full treatment (indented lines, curly or square brackets, etc).
-     {@link String} instances get encoded using {@link #enquoteForJavaString(String)}.
+     {@link String} instances get encoded using {@link #enquoteJavaString(String)}.
      Everything else gets the {@code String.valueOf( thing )} treatment.
      <p/>This is intended to be an easy-to-use pretty printer. See {@link #prettyFormatJsonThing(int, String, Object, PrettyLineManager)}
      for the more flexible and elaborate version (which is what does the actually pretty printing that this method is claiming credit for).
@@ -723,7 +723,7 @@ public class WikiTreeApiUtilities {
     /**
      Pretty-format into a {@link StringWriter} anything which might appear in a {@link JSONArray} or {@link JSONObject}.
      <p/>{@link JSONArray} and {@link JSONObject} instances get the full treatment (indented lines, curly or square brackets, etc).
-     {@link String} instances get encoded using {@link #enquoteForJavaString(String)}.
+     {@link String} instances get encoded using {@link #enquoteJavaString(String)}.
      Everything else gets the {@code String.valueOf( thing )} treatment.
      <p/>This is intended to be an easy-to-use pretty printer. See {@link #prettyFormatJsonThing(int, String, Object, PrettyLineManager)}
      for the more flexible and elaborate version (which is what does the actually pretty printing that this method is claiming credit for).
@@ -774,7 +774,7 @@ public class WikiTreeApiUtilities {
     /**
      Pretty-format onto a {@link PrettyLineManager} anything which might appear in a {@link JSONArray} or {@link JSONObject}.
      <p/>{@link JSONArray} and {@link JSONObject} instances get the full treatment (indented lines, curly or square brackets, etc).
-     {@link String} instances get encoded using {@link #enquoteForJavaString(String)}.
+     {@link String} instances get encoded using {@link #enquoteJavaString(String)}.
      Everything else gets the {@code String.valueOf( thing )} treatment.
      <p/>See {@link #prettyPrintJsonThing(String, Object)} or {@link #prettyFormatJsonThing(String, Object)} for an easier to use but somewhat less flexible pretty-printer or pretty-formatter.
 
@@ -814,7 +814,7 @@ public class WikiTreeApiUtilities {
                 WikiTreeApiUtilities.doNothing();
             }
 
-            plm.append( enquoteForJavaString( name ) ).append( " : " );
+            plm.append( enquoteJavaString( name ) ).append( " : " );
 
         }
 
@@ -907,7 +907,7 @@ public class WikiTreeApiUtilities {
 
         } else if ( iThing instanceof String ) {
 
-            plm.append( enquoteForJavaString( (String)iThing ) ).rotate();
+            plm.append( enquoteJavaString( (String)iThing ) ).rotate();
 
         } else {
 
