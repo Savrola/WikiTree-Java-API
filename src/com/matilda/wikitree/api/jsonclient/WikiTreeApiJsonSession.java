@@ -576,8 +576,8 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      <a href="https://www.wikitree.com/wiki/Help:API_Documentation">https://www.wikitree.com/wiki/Help:API_Documentation</a>
      for more information about requesting profiles.
 
-     @param key The Person.Name (e.g. {@code "Churchill-4"}), the Space.page_name (e.g. {@code "Space:Allied_POW_camps"), or the PageId
-     (e.g. {@code "7933538"}) of the profile of interest.
+     @param key The Person.Name (e.g. {@code "Churchill-4"}) or the Space.page_name (e.g. {@code "Space:Allied_POW_camps") of the profile of interest.
+     Use {@link #getProfile(long)} if all you've got is the page id or the profile of interest.
      @return a JSONObject containing the requested information.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
@@ -600,6 +600,22 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         return optResultObject;
 
     }
+
+    /**
+     Request a person profile or a Free-Space Profile.
+     <p/>See the <b>getProfile</b> section
+     <a href="https://www.wikitree.com/wiki/Help:API_Documentation">https://www.wikitree.com/wiki/Help:API_Documentation</a>
+     for more information about requesting profiles.
+
+     @param profileId The page id or the profile of interest (use {@link #getProfile(WikiTreeId)} if you have the profile's WikiTree Id (e.g. {@code "Churchill-4"}) or its Space.page name (e.g. {@code "Space:Allied_POW_camps").
+     @return a JSONObject containing the requested information.
+     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
+     If you do see one, you have probably encountered a bug in this software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
+     @throws IOException
+     @throws ParseException
+     */
 
     @NotNull
     public Optional<JSONObject> getProfile( long profileId )

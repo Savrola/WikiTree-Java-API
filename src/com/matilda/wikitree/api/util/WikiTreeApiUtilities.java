@@ -41,6 +41,36 @@ public class WikiTreeApiUtilities {
     public static final Pattern SPACE_NAME_PATTERN = Pattern.compile( "Space:..*" );
 
     public static final SortedMap<String, GetRelatives> RELATIVE_GETTERS;
+    public static final Pattern YYYY_MM_DD = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)" );
+
+    private static String[] s_longMonthNames = {
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+    };
+    private static String[] s_shortMonthNames = {
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+    };
 
     static {
 
@@ -90,6 +120,116 @@ public class WikiTreeApiUtilities {
         RELATIVE_GETTERS = Collections.unmodifiableSortedMap( relativeKeys );
 
         S_ALL_GET_PERSON_FIELDS_SET = Collections.unmodifiableSortedSet( tmpSet );
+
+    }
+
+    /**
+     Format a date extracted from the WikiTree database.
+
+     @param dateString the date string in {@code YYYY-MM-DD} format.
+     @param longMonthName if {@code true} then the returned value uses long month names (e.g. {@code January}, {@code February}, etc);
+     otherwise, the returned value uses three letter month names (e.g. {@code Jan}, {@code Feb}, etc).
+     @param handleInOn if {@code true} then the date is prefixed with {@code "on "} if it is exact (has a year, month and day of month)
+     and is prefixed with {@code "in "} if it is in-exact (is missing the month and day of month, or missing just the day of month); if {@code false} then
+     just the naked date is returned.
+     @throws IllegalArgumentException if {@code dateString} is not of the format {@code YYYY-MM-DD} where each of the Y's, M's and D's are each
+     replaced by EXACTLY one digit. For example, {@code "1957-10-04"} is valid but "{@code 1957-10-4}"
+     is invalid because it is missing the {@code 0} before the {@code 4}.
+     <br>
+     In case you're wondering why 1957-10-04 was used as the example date, the launch of Sputnik on that date marked the start of the space age.
+     */
+
+    public static String formatDate( @NotNull String dateString, boolean longMonthName, boolean handleInOn ) {
+
+        Matcher m = YYYY_MM_DD.matcher( dateString );
+        if ( m.matches() ) {
+
+            String yearString = m.group(1);
+            String monthString = m.group(2);
+            String dayOfMonthString = m.group(3);
+
+            int year = Integer.parseInt( yearString );
+            int month = Integer.parseInt( monthString );
+            int dayOfMonth = Integer.parseInt( dayOfMonthString );
+
+            String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
+            if ( dayOfMonth == 0) {
+
+                if ( month == 0 ) {
+
+                    if ( handleInOn ) {
+
+                        return "in " + yearString;
+
+                    } else {
+
+                        return yearString;
+
+                    }
+
+                } else {
+
+                    if ( handleInOn ) {
+
+                        return "in " + monthName + " " + yearString;
+
+                    } else {
+
+                        return monthName + " " + yearString;
+
+                    }
+
+                }
+
+            } else if ( month == 0 ) {
+
+                throw new IllegalArgumentException( "month must be non-zero if day is non-zero (date is " + dateString + ")" );
+
+            } else {
+
+                if ( handleInOn ) {
+
+                    return "on " + dayOfMonth + " " + monthName + " " + yearString;
+
+                } else {
+
+                    return dayOfMonth + " " + monthName + " " + yearString;
+
+                }
+
+            }
+
+        } else {
+
+            throw new IllegalArgumentException( "invalid date \"" + dateString + "\" (must be YYYY-MM-DD)" );
+
+        }
+
+    }
+
+    /**
+     A simplified way to format a date extracted from the WikiTree database.
+     <p/>
+     This method is equivalent to called {@link #formatDate(String, boolean, boolean)} with the second {@code longMonthName}
+     parameter set to {@code false} and the third {@code handleInOn} parameter set to {@code true}.
+     Put another way, if the date in question is in a {@link String} variable called {@code myDate} this method is exactly equivalent to
+     <blockquote>
+     <pre>WikiTreeApiUtilities.formatDate( myDate, false, true );
+     </pre>
+     </blockquote>
+
+     @param dateString the date string in {@code YYYY-MM-DD} format.
+     @throws IllegalArgumentException if {@code dateString} is not of the format {@code YYYY-MM-DD} where each of the Y's, M's and D's are each
+     replaced by EXACTLY one digit. For example, {@code "1957-10-04"} is valid but "{@code 1957-10-4}"
+     is invalid because it is missing the {@code 0} before the {@code 4}.
+     <br>
+     In case you're wondering why 1957-10-04 was used as the example date, the launch of Sputnik on that date marked the start of the space age.
+     */
+
+
+    public static String formatDate( @NotNull String dateString ) {
+
+        return formatDate( dateString, false, true );
 
     }
 

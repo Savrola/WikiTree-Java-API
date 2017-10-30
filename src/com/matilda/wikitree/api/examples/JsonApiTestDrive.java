@@ -49,7 +49,7 @@ public class JsonApiTestDrive {
                     churchillMarigoldPersonByWikiTreeID
             );
 
-            Optional<JSONObject> churchillPersonByPersonId = request.getPerson( new WikiTreeId( "5589" ) );
+            Optional<JSONObject> churchillPersonByPersonId = request.getPerson( 5589 );
             WikiTreeApiUtilities.prettyPrintJsonThing(
                     "getPerson for 5589 (Person.Id for W. S. Churchill)",
                     churchillPersonByPersonId
@@ -73,7 +73,7 @@ public class JsonApiTestDrive {
                     alliedPowCampsSpaceProfileByPageName
             );
 
-            Optional<JSONObject> alliedPowCampsSpaceProfileByPageId = request.getProfile( new WikiTreeId( "7933538" ) );
+            Optional<JSONObject> alliedPowCampsSpaceProfileByPageId = request.getProfile( 7933538 );
             WikiTreeApiUtilities.prettyPrintJsonThing(
                     "getProfile for Profile Id 7933358 (Space:Allied_POW_camps)",
                     alliedPowCampsSpaceProfileByPageId

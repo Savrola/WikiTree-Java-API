@@ -66,6 +66,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     public static final String SIBLINGS = "Siblings";
     public static final String SPOUSES = "Spouses";
     public static final String SUFFIX = "Suffix";
+    private final boolean _isLiving;
 
     /**
      Specify what type of request yielded this profile.
@@ -193,7 +194,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         // Make sure that what we saved is actually a profile.
 
-        if ( get( IS_LIVING ) == null ) {
+        Object isLiving = get( IS_LIVING );
+        if ( isLiving == null ) {
 
             //noinspection unchecked
             throw new ReallyBadNewsError(
@@ -256,6 +258,33 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         }
 
+        if ( isLiving instanceof Number ) {
+
+            _isLiving = 1 == ((Number)isLiving).intValue();
+            if ( _isLiving && hasDeathDate() ) {
+
+                System.err.println( "warning:  profile for " + getWikiTreeId() + " is marked as living but has a death date of " + WikiTreeApiUtilities.formatDate( getDeathDate() ) );
+
+            }
+
+        } else {
+
+            throw new ReallyBadNewsError(
+                    "WikiTreePersonProfile:  profile's IS_LIVING value is not numeric (it is a " + isLiving.getClass().getCanonicalName() + ")"
+            );
+
+        }
+
+    }
+
+    /**
+     Determine if this person is, according to the WikiTree database, currently alive.
+     */
+
+    public boolean isLiving() {
+
+        return _isLiving;
+
     }
 
     /**
@@ -266,7 +295,15 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public Collection<WikiTreePersonProfile> getParents() {
 
-        return Collections.unmodifiableCollection( _parents );
+        if ( isFullProfile() ) {
+
+            return Collections.unmodifiableCollection( _parents );
+
+        } else {
+
+            throw new IllegalArgumentException( "WikiTreePersonProfile.getParents():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+
+        }
 
     }
 
@@ -278,7 +315,15 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public Collection<WikiTreePersonProfile> getSpouses() {
 
-        return Collections.unmodifiableCollection( _spouses );
+        if ( isFullProfile() ) {
+
+            return Collections.unmodifiableCollection( _spouses );
+
+        } else {
+
+            throw new IllegalArgumentException( "WikiTreePersonProfile.getSpouses():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+
+        }
 
     }
 
@@ -290,7 +335,15 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public Collection<WikiTreePersonProfile> getChildren() {
 
-        return Collections.unmodifiableCollection( _children );
+        if ( isFullProfile() ) {
+
+            return Collections.unmodifiableCollection( _children );
+
+        } else {
+
+            throw new IllegalArgumentException( "WikiTreePersonProfile.getChildren():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+
+        }
 
     }
 
@@ -302,13 +355,38 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public Collection<WikiTreePersonProfile> getSiblings() {
 
-        return Collections.unmodifiableCollection( _siblings );
+        if ( isFullProfile() ) {
+
+            return Collections.unmodifiableCollection( _siblings );
+
+        } else {
+
+            throw new IllegalArgumentException( "WikiTreePersonProfile.getSiblings():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+
+        }
 
     }
 
     public ProfileType getProfileType() {
 
         return _profileType;
+
+    }
+
+    /**
+     Determine if this is this a full (i.e. primary) profile.
+     @return {@code true} if this profile was obtained
+     via a call to {@link WikiTreeApiWrappersSession#getPerson(String, String)} with {@code "*"} as the second parameter.
+     Note that
+     {@link WikiTreeApiWrappersSession#getPerson(WikiTreeId)} and {@link WikiTreeApiWrappersSession#getPerson(long)} return full / primary
+     profiles as they are are really just wrappers which call
+     {@link WikiTreeApiWrappersSession#getPerson(String, String)} with {@code "*"} as the second parameter).
+     Only full / primary profiles can be counted on to include the person's parents, spouses, siblings, and/or children (there may be other differences - use {@code getPerson()} get a full profile if you want everything).
+     */
+
+    public boolean isFullProfile() {
+
+        return _profileType == ProfileType.PRIMARY_PERSON;
 
     }
 
