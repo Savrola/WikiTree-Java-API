@@ -5,9 +5,6 @@
 
 package com.matilda.wikitree.api.exceptions;
 
-import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONObject;
-
 /**
  Thrown if a WikiTree API login request yielded a failure status.
  */
@@ -15,31 +12,45 @@ import org.json.simple.JSONObject;
 public class WikiTreeLoginRequestFailedException extends Exception {
 
     public enum Reason {
-        /** The .wtu file doesn't contain a user name */
+        /**
+         The .wtu file doesn't contain a user name
+         */
         MISSING_USERNAME,
-        /** The .wtu file doesn't contain a password line */
+        /**
+         The .wtu file doesn't contain a password line
+         */
         MISSING_PASSWORD,
-        /** The WikiTree server was unimpressed. */
+        /**
+         The WikiTree server was unimpressed.
+         */
         AUTHENTICATION_FAILED,
-        /** We caught an exception during the actual login attempt to the WikiTree server. Use {@link #getCause} for more info. */
+        /**
+         We caught an exception during the actual login attempt to the WikiTree server. Use {@link #getCause} for more info.
+         */
         CAUGHT_EXCEPTION,
-        /** The args parameter must specify either one or two arguments. */
+        /**
+         The args parameter must specify either one or two arguments.
+         */
         TOO_MANY_ARGUMENTS,
-        /** The specified .wtu file does not actually have a .wtu suffix. */
+        /**
+         The specified .wtu file does not actually have a .wtu suffix.
+         */
         INVALID_WTU_FILENAME
 
     }
 
     private final Reason _reason;
 
-    public WikiTreeLoginRequestFailedException( final String why, Reason reason ) {
+    public WikiTreeLoginRequestFailedException( final String why, final Reason reason ) {
+
         super( why );
 
         _reason = reason;
 
     }
 
-    public WikiTreeLoginRequestFailedException( final String why, Reason reason, Throwable e ) {
+    public WikiTreeLoginRequestFailedException( final String why, final Reason reason, final Throwable e ) {
+
         super( why, e );
 
         _reason = reason;

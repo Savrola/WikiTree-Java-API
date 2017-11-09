@@ -51,12 +51,12 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
      */
 
     public WikiTreeRelatives(
-            String requestKeys,
-            boolean requestParents,
-            boolean requestChildren,
-            boolean requestSpouses,
-            boolean requestSiblings,
-            JSONObject requestObject
+            final String requestKeys,
+            final boolean requestParents,
+            final boolean requestChildren,
+            final boolean requestSpouses,
+            final boolean requestSiblings,
+            final JSONObject requestObject
     ) throws WikiTreeRequestFailedException {
 
         super( requestObject );
@@ -223,10 +223,10 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
     }
 
     private void rememberParent(
-            SortedMap<Long, WikiTreePersonProfile> profiles,
-            SortedMap<Long, WikiTreePersonProfile> myParent,
-            String relationship,
-            WikiTreePersonProfile personProfile
+            final SortedMap<Long, WikiTreePersonProfile> profiles,
+            final SortedMap<Long, WikiTreePersonProfile> myParent,
+            final String relationship,
+            final WikiTreePersonProfile personProfile
     ) {
 
         Number parentNumber = (Number)WikiTreeApiUtilities.getOptionalJsonValue( Number.class, personProfile, relationship );

@@ -15,8 +15,6 @@ import org.json.simple.JSONObject;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  A WikiTree person profile.
@@ -113,11 +111,11 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     private WikiTreePersonProfile _biologicalFather;
 
     private WikiTreePersonProfile _biologicalMother;
-    private Collection<WikiTreePersonProfile> _parents = new LinkedList<>();
-    private Collection<WikiTreePersonProfile> _spouses = new LinkedList<>();
-    private Collection<WikiTreePersonProfile> _children = new LinkedList<>();
+    private final Collection<WikiTreePersonProfile> _parents = new LinkedList<>();
+    private final Collection<WikiTreePersonProfile> _spouses = new LinkedList<>();
+    private final Collection<WikiTreePersonProfile> _children = new LinkedList<>();
 
-    private Collection<WikiTreePersonProfile> _siblings = new LinkedList<>();
+    private final Collection<WikiTreePersonProfile> _siblings = new LinkedList<>();
 
     private Long _personId;
 
@@ -151,7 +149,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             @Nullable final WikiTreeRequestType requestType,
             @NotNull final JSONObject jsonObject,
             @NotNull final ProfileType profileType,
-            String... profileLocation
+            final String... profileLocation
     ) throws WikiTreeRequestFailedException {
 
         super( jsonObject, profileLocation );
@@ -260,10 +258,13 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         if ( isLiving instanceof Number ) {
 
-            _isLiving = 1 == ((Number)isLiving).intValue();
+            _isLiving = 1 == ( (Number)isLiving ).intValue();
             if ( _isLiving && hasDeathDate() ) {
 
-                System.err.println( "warning:  profile for " + getWikiTreeId() + " is marked as living but has a death date of " + WikiTreeApiUtilities.formatDate( getDeathDate() ) );
+                System.err.println( "warning:  profile for " +
+                                    getWikiTreeId() +
+                                    " is marked as living but has a death date of " +
+                                    WikiTreeApiUtilities.formatDate( getDeathDate() ) );
 
             }
 
@@ -301,7 +302,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreePersonProfile.getParents():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            throw new IllegalArgumentException(
+                    "WikiTreePersonProfile.getParents():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
 
         }
 
@@ -321,7 +323,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreePersonProfile.getSpouses():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            throw new IllegalArgumentException(
+                    "WikiTreePersonProfile.getSpouses():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
 
         }
 
@@ -341,7 +344,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreePersonProfile.getChildren():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            throw new IllegalArgumentException(
+                    "WikiTreePersonProfile.getChildren():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
 
         }
 
@@ -361,7 +365,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreePersonProfile.getSiblings():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            throw new IllegalArgumentException(
+                    "WikiTreePersonProfile.getSiblings():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
 
         }
 
@@ -375,6 +380,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Determine if this is this a full (i.e. primary) profile.
+
      @return {@code true} if this profile was obtained
      via a call to {@link WikiTreeApiWrappersSession#getPerson(String, String)} with {@code "*"} as the second parameter.
      Note that
@@ -399,7 +405,11 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      */
 
     @NotNull
-    private static Collection<WikiTreePersonProfile> getPeople( JSONObject profileObject, ProfileType profileType, String relationship )
+    private static Collection<WikiTreePersonProfile> getPeople(
+            final JSONObject profileObject,
+            final ProfileType profileType,
+            final String relationship
+    )
             throws WikiTreeRequestFailedException {
 
         Collection<WikiTreePersonProfile> rval = new LinkedList<>();
@@ -450,7 +460,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      @param biologicalFather this person's biological father.
      */
 
-    public void setBiologicalFather( WikiTreePersonProfile biologicalFather ) {
+    public void setBiologicalFather( final WikiTreePersonProfile biologicalFather ) {
 
         _biologicalFather = biologicalFather;
 
@@ -468,6 +478,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      @return this instance's biological father if it is known to this instance (not the same thing as known to WikiTree).
      */
 
+    @NotNull
     public Optional<WikiTreePersonProfile> getBiologicalFather() {
 
         return Optional.ofNullable( _biologicalFather );
@@ -484,7 +495,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      @param biologicalMother this person's biological mother.
      */
 
-    public void setBiologicalMother( WikiTreePersonProfile biologicalMother ) {
+    public void setBiologicalMother( final WikiTreePersonProfile biologicalMother ) {
 
         _biologicalMother = biologicalMother;
 
@@ -497,6 +508,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      @return this instance's biological mother if it is known to this instance (not the same thing as known to WikiTree).
      */
 
+    @NotNull
     public Optional<WikiTreePersonProfile> getBiologicalMother() {
 
         return Optional.ofNullable( _biologicalMother );
@@ -611,7 +623,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     }
 
-    public Optional<Object> getOptionalValue( @NotNull String jsonKey ) {
+    @NotNull
+    public Optional<Object> getOptionalValue( @NotNull final String jsonKey ) {
 
         Object obj = get( jsonKey );
 
@@ -620,7 +633,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     @NotNull
-    public Object getMandatoryValue( @NotNull String jsonKey ) {
+    public Object getMandatoryValue( @NotNull final String jsonKey ) {
 
         @SuppressWarnings("UnnecessaryLocalVariable") Object obj = get( jsonKey );
 
@@ -629,7 +642,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     @NotNull
-    public <T> T getValue( @NotNull String jsonKey, @NotNull Supplier<T> alternative ) {
+    public <T> T getValue( @NotNull final String jsonKey, @NotNull final Supplier<T> alternative ) {
 
         Optional<Object> optRval = getOptionalValue( jsonKey );
 
@@ -677,14 +690,55 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     /**
+     Does this person actually have a birth name?
+
+     @return {@code true} if they do; {@code false} if they don't.
+     For what it is worth, I (Daniel Boulet) suspect that all profile's have a birth name entry as the alternative just doesn't make sense to me.
+     */
+
+    public boolean hasBirthName() {
+
+        Object s = get( BIRTH_NAME );
+        return s != null && !( (String)s ).trim().isEmpty();
+
+    }
+
+    /**
+     Get the person's birth name.
+
+     @return the person's birth name.
+     @throws IllegalArgumentException if the person has no birth name (see {@link #hasBirthName()} for a way to avoid this).
+     For what it is worth, I (Daniel Boulet) suspect that all profile's have a birth name entry as the alternative just doesn't make sense to me.
+     */
+
+    @NotNull
+    public String getBirthName() {
+
+        String birthName = (String)get( BIRTH_NAME );
+        if ( birthName == null || birthName.trim().isEmpty() ) {
+
+            // Seriously??? How can a profile not have a birth name?
+
+            throw new IllegalArgumentException( "WikiTreePersonProfile.getBirthName():  \"" +
+                                                getShortName() +
+                                                "\" has no birth name (please notify danny@matilda.com)" );
+
+        }
+
+        return birthName.trim();
+
+    }
+
+    /**
      Does this person actually have a first name?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasFirstName() {
 
         Object s = get( FIRST_NAME );
-        return s != null && !((String)s).trim().isEmpty();
+        return s != null && !( (String)s ).trim().isEmpty();
 
     }
 
@@ -709,13 +763,14 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a marriage date (probably only happens in spouse records that hang off person records)?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasMarriageDate() {
 
         Object s = get( MARRIAGE_DATE );
-        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+        return s != null && !( (String)s ).trim().isEmpty() && !"0000-00-00".equals( s );
 
     }
 
@@ -738,13 +793,14 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a marriage location (probably only happens in spouse records that hang off person records)?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasMarriageLocation() {
 
         Object s = get( MARRIAGE_LOCATION );
-        return s != null && !((String)s).trim().isEmpty();
+        return s != null && !( (String)s ).trim().isEmpty();
 
     }
 
@@ -824,18 +880,20 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a birth location?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasBirthLocation() {
 
         Object s = get( BIRTH_LOCATION );
-        return s != null && !((String)s).trim().isEmpty();
+        return s != null && !( (String)s ).trim().isEmpty();
 
     }
 
     /**
      Get the person's birth location.
+
      @return the person's birth location.
      @throws IllegalArgumentException if they don't have a birth location (see {@link #hasBirthLocation} for a way around this).
      */
@@ -852,18 +910,20 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a birth date?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasBirthDate() {
 
         Object s = get( BIRTH_DATE );
-        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+        return s != null && !( (String)s ).trim().isEmpty() && !"0000-00-00".equals( s );
 
     }
 
     /**
      Get the person's birth date.
+
      @return whatever happens to be in the database (obviously not good enough but this is method is a work in progress right now).
      @throws IllegalArgumentException if they don't have a birth date (see {@link #hasBirthDate} for a way around this).
      */
@@ -879,18 +939,20 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a death date?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasDeathDate() {
 
         Object s = get( DEATH_DATE );
-        return s != null && !((String)s).trim().isEmpty() && !"0000-00-00".equals( s );
+        return s != null && !( (String)s ).trim().isEmpty() && !"0000-00-00".equals( s );
 
     }
 
     /**
      Get the person's death date.
+
      @return whatever happens to be in the database (obviously not good enough but this is method is a work in progress right now).
      @throws IllegalArgumentException if they don't have a birth date (see {@link #hasBirthDate} for a way around this).
      */
@@ -906,18 +968,20 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     /**
      Does this person have a death location?
+
      @return {@code true} if they do; {@code false} if they don't.
      */
 
     public boolean hasDeathLocation() {
 
         Object s = get( DEATH_LOCATION );
-        return s != null && !((String)s).trim().isEmpty();
+        return s != null && !( (String)s ).trim().isEmpty();
 
     }
 
     /**
      Get the person's death location.
+
      @return the person's death location.
      @throws IllegalArgumentException if they don't have a death location (see {@link #hasDeathLocation} for a way around this).
      */

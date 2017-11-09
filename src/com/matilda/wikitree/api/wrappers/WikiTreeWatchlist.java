@@ -43,15 +43,15 @@ public class WikiTreeWatchlist extends WikiTreeWrapper {
     private final Vector<WikiTreePersonProfile> _thisBatch = new Vector<>();
 
     public WikiTreeWatchlist(
-            Boolean getPersonParam,
-            Boolean getSpaceParam,
-            Boolean onlyLivingParam,
-            Boolean excludeLivingParam,
-            String fieldsParam,
-            Integer limitParam,
-            Integer offsetParam,
-            String orderParam,
-            @NotNull JSONObject resultObject
+            final Boolean getPersonParam,
+            final Boolean getSpaceParam,
+            final Boolean onlyLivingParam,
+            final Boolean excludeLivingParam,
+            final String fieldsParam,
+            final Integer limitParam,
+            final Integer offsetParam,
+            final String orderParam,
+            @NotNull final JSONObject resultObject
     ) throws WikiTreeRequestFailedException {
 
         super( resultObject );
@@ -89,7 +89,8 @@ public class WikiTreeWatchlist extends WikiTreeWrapper {
             if ( profileObject instanceof JSONObject ) {
 
                 JSONObject profileJsonObject = (JSONObject)profileObject;
-                WikiTreePersonProfile profile = new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, profileJsonObject, WikiTreePersonProfile.ProfileType.PROFILE );
+                WikiTreePersonProfile profile =
+                        new WikiTreePersonProfile( WikiTreeRequestType.UNKNOWN, profileJsonObject, WikiTreePersonProfile.ProfileType.PROFILE );
 
                 _thisBatch.add( profile );
 

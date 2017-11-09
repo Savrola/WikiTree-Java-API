@@ -82,7 +82,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @param showUrls {@code true} if URLs should be printed on System.out; {@code false} if not.
      */
 
-    public static void setShowUrls( boolean showUrls ) {
+    public static void setShowUrls( final boolean showUrls ) {
 
         s_showUrls = showUrls;
 
@@ -95,7 +95,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      <p/>See {@link #WikiTreeApiJsonSession()} for more information about anonymous vs authenticated WikiTree API client instances.
      */
 
-    public WikiTreeApiJsonSession( String baseServerUrlString ) {
+    public WikiTreeApiJsonSession( final String baseServerUrlString ) {
 
         _baseServerUrlString = baseServerUrlString == null ? DEFAULT_BASE_SERVER_URL_STRING : baseServerUrlString;
 
@@ -198,7 +198,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean login( @NotNull String emailAddress, @NotNull String password )
+    public boolean login( @NotNull final String emailAddress, @NotNull final String password )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -244,9 +244,11 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     /**
      Get the result from the most recent login attempt.
+
      @return the {@link JSONObject} returned by the WikiTree API server.
      */
 
+    @NotNull
     public Optional<JSONObject> getLastLoginResult() {
 
         return Optional.ofNullable( _lastLoginResult );
@@ -263,7 +265,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @return {@code true} if the login worked; {@code false} otherwise.
      */
 
-    private boolean analyzeLoginResult( @NotNull String emailAddress, @Nullable JSONObject resultObject ) {
+    private boolean analyzeLoginResult( @NotNull final String emailAddress, @Nullable final JSONObject resultObject ) {
 
         // Start off by assuming that the login attempt failed.
 
@@ -419,7 +421,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
 
     @NotNull
-    public Optional<JSONObject> getPerson( @NotNull WikiTreeId key )
+    public Optional<JSONObject> getPerson( @NotNull final WikiTreeId key )
             throws IOException, ParseException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -441,7 +443,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
 
     @NotNull
-    public Optional<JSONObject> getPerson( long personId )
+    public Optional<JSONObject> getPerson( final long personId )
             throws IOException, ParseException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -469,7 +471,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getPerson( @NotNull WikiTreeId key, String fields )
+    public Optional<JSONObject> getPerson( @NotNull final WikiTreeId key, final String fields )
             throws IOException, ParseException {
 
         return getPerson( key.getValueString(), fields );
@@ -494,7 +496,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     }
 
     @NotNull
-    public Optional<JSONObject> getPerson( long personId, String fields )
+    public Optional<JSONObject> getPerson( final long personId, final String fields )
             throws IOException, ParseException {
 
         return getPerson( "" + personId, fields );
@@ -520,7 +522,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getPerson( String key, String fields )
+    public Optional<JSONObject> getPerson( final String key, final String fields )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -545,7 +547,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     }
 
-    public static Object interpretIdParameter( String who, @NotNull String key ) {
+    public static Object interpretIdParameter( final String who, @NotNull final String key ) {
 
         if ( key.length() == 0 ) {
 
@@ -588,7 +590,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getProfile( WikiTreeId key )
+    public Optional<JSONObject> getProfile( final WikiTreeId key )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -618,7 +620,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
 
     @NotNull
-    public Optional<JSONObject> getProfile( long profileId )
+    public Optional<JSONObject> getProfile( final long profileId )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -634,19 +636,19 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     /**
      Request the biography for a specified person (someone with a WikiTree profile).
 
+     @param key the specified person's WikiTree ID or Person.Id.
+     This parameter will be treated as a Person.Id if it can be successfully parsed by {@link Integer#parseInt(String)}.
+     For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id) to request the biography section of Winston S. Churchill's profile.
      @return A JSONObject containing the specified person's biography.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
      If you do see one, you have probably encountered a bug in this software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
      to reproduce the problem).
-      @param key the specified person's WikiTree ID or Person.Id.
-      This parameter will be treated as a Person.Id if it can be successfully parsed by {@link Integer#parseInt(String)}.
-      For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id) to request the biography section of Winston S. Churchill's profile.
      */
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getBio( WikiTreeId key )
+    public Optional<JSONObject> getBio( final WikiTreeId key )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -668,15 +670,15 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @param getSpace      if {@code true} or {@code null} then space profiles on the user's watchlist will be returned;
      if {@code false} then space profiles are excluded.
      @param onlyLiving    if {@code true} then only person profiles of living people on the user's watchlist will be returned
-                            (i.e. person profiles for dead people will be excluded);
+     (i.e. person profiles for dead people will be excluded);
      otherwise, if {@code false} or {@code null} then person profiles for both living and dead people on the user's watchlist will be returned.
      @param excludeLiving if {@code true} then only person profiles of dead people on the user's watchlist will be returned
-                            (i.e. person profiles for living people will be excluded);
+     (i.e. person profiles for living people will be excluded);
      otherwise, if {@code false} or {@code null} then person profiles for both living and dead people on the user's watchlist will be returned.
      This parameter will be treated as a Person.Id if it can be successfully parsed by {@link Integer#parseInt(String)}.
      @param fields        a comma separated list of the fields to be returned; if {@code "*"} or {@code null} then all fields are returned.
      @param limit         if {@code null} then a maximum of 100 profiles are returned;
-                            otherwise, specifies the maximum number of profiles to be returned.
+     otherwise, specifies the maximum number of profiles to be returned.
      @param offset        if {@code null} then all profiles (up to the limit specified by the <b>limit</b>} parameter) are returned;
      otherwise, specifies how many profiles should be skipped.
      @param order         if {@code null} then the returned profiles are sorted by their <b>user_id</b>;
@@ -685,22 +687,22 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @throws IllegalArgumentException if this method is called on an anonymous WikiTree API client instance.
      @throws IOException              if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException           if this client is unable to process the response from the WikiTree API server.
-                                        Seeing this exception should be a rather rare occurrence. If you do see one, you have probably
-                                        encountered a bug in this software. Please notify danny@matilda.com if you get this exception
-                                        (be prepared to work with Danny to reproduce the problem).
+     Seeing this exception should be a rather rare occurrence. If you do see one, you have probably
+     encountered a bug in this software. Please notify danny@matilda.com if you get this exception
+     (be prepared to work with Danny to reproduce the problem).
      */
 
     @SuppressWarnings("unchecked")
     @NotNull
     public Optional<JSONObject> getWatchlist(
-            Boolean getPerson,
-            Boolean getSpace,
-            Boolean onlyLiving,
-            Boolean excludeLiving,
-            String fields,
-            Integer limit,
-            Integer offset,
-            String order
+            final Boolean getPerson,
+            final Boolean getSpace,
+            final Boolean onlyLiving,
+            final Boolean excludeLiving,
+            final String fields,
+            final Integer limit,
+            final Integer offset,
+            final String order
     )
             throws IOException, ParseException {
 
@@ -783,14 +785,14 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @return A JSONObject containing the specified person's ancestors.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception
-                            should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this
-                            software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
-                            to reproduce the problem).
+     should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this
+     software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
      */
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getAncestors( @NotNull WikiTreeId key, @Nullable Integer depth )
+    public Optional<JSONObject> getAncestors( @NotNull final WikiTreeId key, @Nullable final Integer depth )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -834,14 +836,20 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @return A JSONObject containing the specified person's ancestors.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception
-                            should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this
-                            software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
-                            to reproduce the problem).
+     should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this
+     software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
      */
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getRelatives( String keys, boolean getParents, boolean getChildren, boolean getSpouses, boolean getSiblings )
+    public Optional<JSONObject> getRelatives(
+            final String keys,
+            final boolean getParents,
+            final boolean getChildren,
+            final boolean getSpouses,
+            final boolean getSiblings
+    )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -869,7 +877,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     }
 
     @NotNull
-    private Optional<JSONObject> makeRequest( JSONObject requestObject )
+    private Optional<JSONObject> makeRequest( final JSONObject requestObject )
             throws IOException, ParseException {
 
 //	System.out.println( "... starting @ " + WikiTreeApiUtilities.formatStandardMs( new Date() ) );
@@ -891,7 +899,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     }
 
     @NotNull
-    private synchronized Optional<JSONObject> requestViaHttpGet( JSONObject requestObject )
+    private synchronized Optional<JSONObject> requestViaHttpGet( final JSONObject requestObject )
             throws IOException, ParseException {
 
         String who = "requestViaHttpGet";

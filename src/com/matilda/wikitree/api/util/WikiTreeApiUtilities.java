@@ -42,8 +42,10 @@ public class WikiTreeApiUtilities {
 
     public static final SortedMap<String, GetRelatives> RELATIVE_GETTERS;
     public static final Pattern YYYY_MM_DD = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)" );
+    public static final Pattern YYYY_MM = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)" );
+    public static final Pattern YYYY = Pattern.compile( "(\\d\\d\\d\\d)" );
 
-    private static String[] s_longMonthNames = {
+    private static final String[] s_longMonthNames = {
             "January",
             "February",
             "March",
@@ -57,7 +59,7 @@ public class WikiTreeApiUtilities {
             "November",
             "December"
     };
-    private static String[] s_shortMonthNames = {
+    private static final String[] s_shortMonthNames = {
             "Jan",
             "Feb",
             "Mar",
@@ -110,7 +112,7 @@ public class WikiTreeApiUtilities {
                 "Manager"
         );
 
-        SortedMap<String,GetRelatives> relativeKeys = new TreeMap<>();
+        SortedMap<String, GetRelatives> relativeKeys = new TreeMap<>();
 
         relativeKeys.put( "Children", ( paramName, personProfile ) -> personProfile.getChildren() );
         relativeKeys.put( "Siblings", ( paramName, personProfile ) -> personProfile.getSiblings() );
@@ -126,10 +128,10 @@ public class WikiTreeApiUtilities {
     /**
      Format a date extracted from the WikiTree database.
 
-     @param dateString the date string in {@code YYYY-MM-DD} format.
+     @param dateString    the date string in {@code YYYY-MM-DD} format.
      @param longMonthName if {@code true} then the returned value uses long month names (e.g. {@code January}, {@code February}, etc);
      otherwise, the returned value uses three letter month names (e.g. {@code Jan}, {@code Feb}, etc).
-     @param handleInOn if {@code true} then the date is prefixed with {@code "on "} if it is exact (has a year, month and day of month)
+     @param handleInOn    if {@code true} then the date is prefixed with {@code "on "} if it is exact (has a year, month and day of month)
      and is prefixed with {@code "in "} if it is in-exact (is missing the month and day of month, or missing just the day of month); if {@code false} then
      just the naked date is returned.
      @throws IllegalArgumentException if {@code dateString} is not of the format {@code YYYY-MM-DD} where each of the Y's, M's and D's are each
@@ -139,78 +141,125 @@ public class WikiTreeApiUtilities {
      In case you're wondering why 1957-10-04 was used as the example date, the launch of Sputnik on that date marked the start of the space age.
      */
 
-    public static String formatDate( @NotNull String dateString, boolean longMonthName, boolean handleInOn ) {
+    public static String formatDate( @NotNull final String dateString, final boolean longMonthName, final boolean handleInOn ) {
+
+        if ( "<<unknown>>".equals( dateString ) ) {
+
+            if ( handleInOn ) {
+
+                return "on unknown date";
+
+            } else {
+
+                return "unknown date";
+
+            }
+
+        }
+
+        final String yearString;
+        final String monthString;
+        final String dayOfMonthString;
 
         Matcher m = YYYY_MM_DD.matcher( dateString );
         if ( m.matches() ) {
 
-            String yearString = m.group(1);
-            String monthString = m.group(2);
-            String dayOfMonthString = m.group(3);
+            yearString = m.group( 1 );
+            monthString = m.group( 2 );
+            dayOfMonthString = m.group( 3 );
 
-            int year = Integer.parseInt( yearString );
-            int month = Integer.parseInt( monthString );
-            int dayOfMonth = Integer.parseInt( dayOfMonthString );
+        } else {
 
-            String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
-            if ( dayOfMonth == 0) {
+            m = YYYY_MM.matcher( dateString );
+            if ( m.matches() ) {
 
-                if ( month == 0 ) {
-
-                    if ( handleInOn ) {
-
-                        return "in " + yearString;
-
-                    } else {
-
-                        return yearString;
-
-                    }
-
-                } else {
-
-                    if ( handleInOn ) {
-
-                        return "in " + monthName + " " + yearString;
-
-                    } else {
-
-                        return monthName + " " + yearString;
-
-                    }
-
-                }
-
-            } else if ( month == 0 ) {
-
-                throw new IllegalArgumentException( "month must be non-zero if day is non-zero (date is " + dateString + ")" );
+                yearString = m.group( 1 );
+                monthString = m.group( 2 );
+                dayOfMonthString = null;
 
             } else {
 
-                if ( handleInOn ) {
+                m = YYYY.matcher( dateString );
+                if ( m.matches() ) {
 
-                    return "on " + dayOfMonth + " " + monthName + " " + yearString;
+                    yearString = m.group( 1 );
+                    monthString = null;
+                    dayOfMonthString = null;
 
                 } else {
 
-                    return dayOfMonth + " " + monthName + " " + yearString;
+                    throw new IllegalArgumentException( "invalid date \"" + dateString + "\" (must be YYYY-MM-DD)" );
 
                 }
 
             }
 
+        }
+
+//        int year = Integer.parseInt( yearString );
+        int month = monthString == null ? 0 : Integer.parseInt( monthString );
+        int dayOfMonth = dayOfMonthString == null ? 0 : Integer.parseInt( dayOfMonthString );
+
+        String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
+
+        if ( dayOfMonth == 0 ) {
+
+            if ( month == 0 ) {
+
+                if ( handleInOn ) {
+
+                    return "in " + yearString;
+
+                } else {
+
+                    return yearString;
+
+                }
+
+            } else {
+
+                if ( handleInOn ) {
+
+                    return "in " + monthName + " " + yearString;
+
+                } else {
+
+                    return monthName + " " + yearString;
+
+                }
+
+            }
+
+        } else if ( month == 0 ) {
+
+            throw new IllegalArgumentException( "month must be non-zero if day is non-zero (date is " + dateString + ")" );
+
         } else {
 
-            throw new IllegalArgumentException( "invalid date \"" + dateString + "\" (must be YYYY-MM-DD)" );
+            if ( handleInOn ) {
+
+                return "on " + dayOfMonth + " " + monthName + " " + yearString;
+
+            } else {
+
+                return dayOfMonth + " " + monthName + " " + yearString;
+
+            }
 
         }
+
+//        } else {
+//
+//            throw new IllegalArgumentException( "invalid date \"" + dateString + "\" (must be YYYY-MM-DD)" );
+//
+//        }
 
     }
 
     /**
      A simplified way to format a date extracted from the WikiTree database.
      <p/>
-     This method is equivalent to called {@link #formatDate(String, boolean, boolean)} with the second {@code longMonthName}
+     This method is equivalent to calling {@link #formatDate(String, boolean, boolean)} with the second {@code longMonthName}
      parameter set to {@code false} and the third {@code handleInOn} parameter set to {@code true}.
      Put another way, if the date in question is in a {@link String} variable called {@code myDate} this method is exactly equivalent to
      <blockquote>
@@ -227,7 +276,7 @@ public class WikiTreeApiUtilities {
      */
 
 
-    public static String formatDate( @NotNull String dateString ) {
+    public static String formatDate( @NotNull final String dateString ) {
 
         return formatDate( dateString, false, true );
 
@@ -249,7 +298,7 @@ public class WikiTreeApiUtilities {
     public static final String JAVA_NEWLINE = String.format( "%n" );
 
     @Nullable
-    public static Object readResponse( HttpURLConnection connection, @SuppressWarnings("SameParameterValue") boolean expectSingleResult )
+    public static Object readResponse( final HttpURLConnection connection, @SuppressWarnings("SameParameterValue") final boolean expectSingleResult )
             throws IOException, ParseException {
 
         StringBuilder sb = new StringBuilder();
@@ -345,7 +394,7 @@ public class WikiTreeApiUtilities {
         }
     }
 
-    public static String cleanupStringDate( Object stringDateObj ) {
+    public static String cleanupStringDate( final Object stringDateObj ) {
 
         if ( stringDateObj instanceof String ) {
 
@@ -363,7 +412,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static String cleanupStringDate( String stringDate ) {
+    public static String cleanupStringDate( final String stringDate ) {
 
         if ( stringDate == null ) {
 
@@ -384,7 +433,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static SortedSet<String> constructExcludedGetPersonFieldsSet( String... excludedFields ) {
+    public static SortedSet<String> constructExcludedGetPersonFieldsSet( final String... excludedFields ) {
 
         SortedSet<String> tmpFields = new TreeSet<>();
         Collections.addAll( tmpFields, excludedFields );
@@ -393,7 +442,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static SortedSet<String> constructExcludedGetPersonFieldsSet( @NotNull SortedSet<String> excludedFields ) {
+    public static SortedSet<String> constructExcludedGetPersonFieldsSet( @NotNull final SortedSet<String> excludedFields ) {
 
         SortedSet<String> includedFields = new TreeSet<>( S_ALL_GET_PERSON_FIELDS_SET );
         includedFields.removeAll( excludedFields );
@@ -402,13 +451,13 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static String constructGetPersonFieldsString( @NotNull SortedSet<String> includedFields ) {
+    public static String constructGetPersonFieldsString( @NotNull final SortedSet<String> includedFields ) {
 
         return constructGetPersonFieldsString( includedFields.toArray( new String[includedFields.size()] ) );
 
     }
 
-    public static String constructGetPersonFieldsString( String... includedFields ) {
+    public static String constructGetPersonFieldsString( final String... includedFields ) {
 
         StringBuilder sb = new StringBuilder();
         String comma = "";
@@ -426,12 +475,13 @@ public class WikiTreeApiUtilities {
     /**
      Determine if a string represents a value which can be used as a Space.Id or a Person.Id.
      <p/>Note that this method doesn't really have anything to do with WikITree Ids. It should probably find a better home.
+
      @param numericIdString the id string.
      @return {@code true} if the specified id string yields a positive value when parsed using {@link Long#parseLong(String)};
      {@code false} otherwise.
      */
 
-    public static boolean isValidNumericIdString( @NotNull String numericIdString ) {
+    public static boolean isValidNumericIdString( @NotNull final String numericIdString ) {
 
         try {
 
@@ -453,11 +503,12 @@ public class WikiTreeApiUtilities {
      (does not consist of {@code "Space:"} followed by at least one additional character)
      and does contain a sequence of one or more characters followed by a minus sign followed by one or more digits.
      This is a rather loose definition but it does eliminate anything which is not a valid WikiTree ID Name.
+
      @param wikiTreeIdName the proposed WikiTree ID Name.
      @return {@code true} if the string satisfies the above definition of a valid WikiTree ID Name; {@code false} otherwise.
      */
 
-    public static boolean isValidWikiTreeIdPersonName( @NotNull String wikiTreeIdName ) {
+    public static boolean isValidWikiTreeIdPersonName( @NotNull final String wikiTreeIdName ) {
 
         if ( isValidWikiTreeSpaceName( wikiTreeIdName ) ) {
 
@@ -476,11 +527,12 @@ public class WikiTreeApiUtilities {
      Determine if a string contains a valid WikiTree Space Name.
      An string which starts with {@code "Space:"} and contains at least one additional character is considered to be
      a WikiTree Space Name.
+
      @param spaceWikiTreeId the proposed WikiTree Space Name.
      @return {@code true} if the string starts with {@code "Space:"} and contains at least one additional character; {@code false} otherwise.
      */
 
-    public static boolean isValidWikiTreeSpaceName( @NotNull String spaceWikiTreeId ) {
+    public static boolean isValidWikiTreeSpaceName( @NotNull final String spaceWikiTreeId ) {
 
         Matcher mSpaceName = SPACE_NAME_PATTERN.matcher( spaceWikiTreeId );
         return mSpaceName.matches();
@@ -504,7 +556,7 @@ public class WikiTreeApiUtilities {
          @param ps where the pretty-fied output should go.
          */
 
-        public PrettyLineManager( @NotNull Writer ps ) {
+        public PrettyLineManager( @NotNull final Writer ps ) {
 
             super();
 
@@ -519,7 +571,7 @@ public class WikiTreeApiUtilities {
          @throws IOException if something goes wrong when writing the line.
          */
 
-        private void println( StringBuilder sb )
+        private void println( final StringBuilder sb )
                 throws IOException {
 
             _ps.write( sb.toString() );
@@ -537,7 +589,7 @@ public class WikiTreeApiUtilities {
          @return this instance (allows chained calls to methods in this class).
          */
 
-        public PrettyLineManager append( @NotNull Object value ) {
+        public PrettyLineManager append( @NotNull final Object value ) {
 
             if ( _currentOutputLine == null ) {
 
@@ -648,7 +700,7 @@ public class WikiTreeApiUtilities {
      <blockquote><tt>2001-07-04T12:08:56.235-0700</tt></blockquote>
      */
 
-    public static String formatStandardMs( Date dateTime ) {
+    public static String formatStandardMs( final Date dateTime ) {
 
         synchronized ( WikiTreeApiUtilities.STANDARD_MS ) {
 
@@ -671,7 +723,7 @@ public class WikiTreeApiUtilities {
      @throws UnsupportedEncodingException if one of the parameter values cannot be encoded by {@link URLEncoder#encode(String)}.
      */
 
-    public static void formatRequestAsUrlQueryParameters( String who, JSONObject parametersObject, StringBuffer requestSb )
+    public static void formatRequestAsUrlQueryParameters( final String who, final JSONObject parametersObject, final StringBuffer requestSb )
             throws UnsupportedEncodingException {
 
         boolean first = true;
@@ -749,7 +801,7 @@ public class WikiTreeApiUtilities {
      @return the enquoted string or the four character string {@code "null"} if the supplied parameter is null.
      */
 
-    public static String enquoteJavaString( String string ) {
+    public static String enquoteJavaString( final String string ) {
 
         if ( string == null ) {
 
@@ -808,7 +860,7 @@ public class WikiTreeApiUtilities {
      @throws IllegalArgumentException if {@code copies} is negative.
      */
 
-    public static String repl( String s, int copies ) {
+    public static String repl( final String s, final int copies ) {
 
         if ( copies < 0 ) {
 
@@ -850,7 +902,7 @@ public class WikiTreeApiUtilities {
      (this strikes me as impossible which is why this method doesn't throw the IOException).
      */
 
-    public static void prettyPrintJsonThing( String name, @Nullable Object thing )
+    public static void prettyPrintJsonThing( final String name, @Nullable final Object thing )
         /*throws IOException*/ {
 
         StringWriter sw = prettyFormatJsonThing( name, thing );
@@ -884,7 +936,7 @@ public class WikiTreeApiUtilities {
      (this strikes me as impossible which is why this method doesn't throw the IOException).
      */
 
-    public static StringWriter prettyFormatJsonThing( String name, @Nullable Object thing ) {
+    public static StringWriter prettyFormatJsonThing( final String name, @Nullable final Object thing ) {
 
         StringWriter sw = new StringWriter();
         try {
@@ -929,7 +981,7 @@ public class WikiTreeApiUtilities {
      @throws IOException if something goes wrong writing the pretty-printed lines.
      */
 
-    public static void prettyFormatJsonThing( int indent, String name, @Nullable Object thing, PrettyLineManager plm )
+    public static void prettyFormatJsonThing( final int indent, final String name, @Nullable final Object thing, final PrettyLineManager plm )
             throws IOException {
 
         // Unwrap any {@link Optional} instances which happen to wrap what we're supposed to be formatting.
@@ -944,7 +996,7 @@ public class WikiTreeApiUtilities {
         plm.append( repl( INDENT_STRING, indent ) );
         if ( iThing instanceof WikiTreePersonProfile ) {
 
-            plm.append( ((WikiTreePersonProfile)iThing).getProfileType() ).append( " " );
+            plm.append( ( (WikiTreePersonProfile)iThing ).getProfileType() ).append( " " );
 
         }
 
@@ -1066,7 +1118,7 @@ public class WikiTreeApiUtilities {
      @throws IOException if something goes wrong while reading the content from the {@link Reader}.
      */
 
-    public static void readFromConnection( @SuppressWarnings("SameParameterValue") boolean server, StringBuilder sb, Reader reader )
+    public static void readFromConnection( @SuppressWarnings("SameParameterValue") final boolean server, final StringBuilder sb, final Reader reader )
             throws IOException {
 
         try {
@@ -1106,7 +1158,7 @@ public class WikiTreeApiUtilities {
      @throws ParseException if something goes wrong parsing the string.
      */
 
-    public static JSONArray parseJsonArray( String jsonArrayString )
+    public static JSONArray parseJsonArray( final String jsonArrayString )
             throws ParseException {
 
         JSONParser jp = new JSONParser();
@@ -1129,7 +1181,7 @@ public class WikiTreeApiUtilities {
      @throws ParseException if something goes wrong parsing the string.
      */
 
-    public static JSONObject parseJsonObject( String jsonObjectString )
+    public static JSONObject parseJsonObject( final String jsonObjectString )
             throws ParseException {
 
         JSONParser jp = new JSONParser();
@@ -1162,7 +1214,7 @@ public class WikiTreeApiUtilities {
      if you're on a Unix or Mac OS X system and as {@code C:\Users\YourWindowsName} if you're on a Windows 10 system.
      */
 
-    public static void maybeLoginToWikiTree( WikiTreeApiClient apiClient, String[] args ) throws WikiTreeLoginRequestFailedException {
+    public static void maybeLoginToWikiTree( final WikiTreeApiClient apiClient, final String[] args ) throws WikiTreeLoginRequestFailedException {
 
         if ( args.length == 0 ) {
 
@@ -1274,7 +1326,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static void printAuthenticatedSessionUserInfo( WikiTreeApiClient apiClient ) {
+    public static void printAuthenticatedSessionUserInfo( final WikiTreeApiClient apiClient ) {
 
         if ( apiClient.isAuthenticated() ) {
 
@@ -1290,21 +1342,21 @@ public class WikiTreeApiUtilities {
     }
 
     @Nullable
-    public static String getOptionalJsonString( JSONObject jsonObject, String... keys ) {
+    public static String getOptionalJsonString( final JSONObject jsonObject, final String... keys ) {
 
         return (String)getOptionalJsonValue( String.class, jsonObject, keys );
 
     }
 
     @NotNull
-    public static String getMandatoryJsonString( JSONObject jsonObject, String... keys ) {
+    public static String getMandatoryJsonString( final JSONObject jsonObject, final String... keys ) {
 
         return (String)getMandatoryJsonValue( String.class, jsonObject, keys );
 
     }
 
     @Nullable
-    public static Object getOptionalJsonValue( @Nullable Class requiredClass, JSONObject jsonObject, String... keys ) {
+    public static Object getOptionalJsonValue( @Nullable final Class requiredClass, final JSONObject jsonObject, final String... keys ) {
 
         Object rval = getJsonValue( false, jsonObject, keys );
 
@@ -1347,7 +1399,7 @@ public class WikiTreeApiUtilities {
      */
 
     @NotNull
-    public static Object getMandatoryJsonValue( @Nullable Class requiredClass, @NotNull JSONObject jsonObject, String... keys ) {
+    public static Object getMandatoryJsonValue( @Nullable final Class requiredClass, @NotNull final JSONObject jsonObject, final String... keys ) {
 
         Object rval = getJsonValue( true, jsonObject, keys );
         if ( rval == null ) {
@@ -1380,7 +1432,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static Object getMandatoryJsonValue( JSONObject jsonObject, String... keys ) {
+    public static Object getMandatoryJsonValue( final JSONObject jsonObject, final String... keys ) {
 
         Object rval = getJsonValue( true, jsonObject, keys );
 
@@ -1388,7 +1440,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static String formatPath( String[] keys ) {
+    public static String formatPath( final String[] keys ) {
 
         StringBuilder sb = new StringBuilder();
         String pointer = "";
@@ -1403,7 +1455,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static String formatResultObject( JSONObject resultObject ) {
+    public static String formatResultObject( final JSONObject resultObject ) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -1433,12 +1485,12 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static Object getJsonValue( boolean verifyStructure, JSONObject xJsonObject, String... keys ) {
+    public static Object getJsonValue( final boolean verifyStructure, final JSONObject xJsonObject, final String... keys ) {
 
         int depth = 1;
         JSONObject jsonObject = xJsonObject;
         Object value = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String pointer = "";
         for ( String key : keys ) {
 

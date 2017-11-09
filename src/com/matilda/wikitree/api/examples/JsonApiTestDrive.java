@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class JsonApiTestDrive {
 
-    public static void main( String[] args ) {
+    public static void main( final String[] args ) {
 
         // Create a JSON-based API session.
 

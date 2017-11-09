@@ -17,15 +17,15 @@ public class ParseException extends Exception {
 	private Object unexpectedObject;
 	private int position;
 	
-	public ParseException(int errorType){
+	public ParseException( final int errorType){
 		this(-1, errorType, null);
 	}
 	
-	public ParseException(int errorType, Object unexpectedObject){
+	public ParseException( final int errorType, final Object unexpectedObject){
 		this(-1, errorType, unexpectedObject);
 	}
 	
-	public ParseException(int position, int errorType, Object unexpectedObject){
+	public ParseException( final int position, final int errorType, final Object unexpectedObject){
 		this.position = position;
 		this.errorType = errorType;
 		this.unexpectedObject = unexpectedObject;
@@ -35,7 +35,7 @@ public class ParseException extends Exception {
 		return errorType;
 	}
 	
-	public void setErrorType(int errorType) {
+	public void setErrorType( final int errorType) {
 		this.errorType = errorType;
 	}
 	
@@ -48,7 +48,7 @@ public class ParseException extends Exception {
 		return position;
 	}
 	
-	public void setPosition(int position) {
+	public void setPosition( final int position) {
 		this.position = position;
 	}
 	
@@ -64,12 +64,12 @@ public class ParseException extends Exception {
 		return unexpectedObject;
 	}
 	
-	public void setUnexpectedObject(Object unexpectedObject) {
+	public void setUnexpectedObject( final Object unexpectedObject) {
 		this.unexpectedObject = unexpectedObject;
 	}
 	
 	public String getMessage() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		switch(errorType){
 		case ERROR_UNEXPECTED_CHAR:

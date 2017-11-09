@@ -52,7 +52,7 @@ public class ReallyBadNewsError
 
     }
 
-    public ReallyBadNewsError( String msg ) {
+    public ReallyBadNewsError( final String msg ) {
 
         super( msg );
 
@@ -61,7 +61,7 @@ public class ReallyBadNewsError
     }
 
     @SuppressWarnings("unused")
-    public ReallyBadNewsError( String msg, Throwable e ) {
+    public ReallyBadNewsError( final String msg, final Throwable e ) {
 
         super( msg, e );
 
@@ -93,7 +93,7 @@ public class ReallyBadNewsError
      */
 
     @SuppressWarnings("UnusedDeclaration")
-    public static OopsCatcher setOopsCatcher( @Nullable OopsCatcher oopsCatcher ) {
+    public static OopsCatcher setOopsCatcher( @Nullable final OopsCatcher oopsCatcher ) {
 
         OopsCatcher oldOopsCatcher = ReallyBadNewsError.s_oopsCatcher;
 

@@ -8,20 +8,21 @@ import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 
 /**
- %%% Something clever goes here.
+ Wrap a JSONObject in something that might prove useful in the long run.
+ <p/>Currently, just an empty class except for a method and associated field that reports the type of thing that is being wrapped.
  */
 
 public class WikiTreeWrapper extends JSONObject {
 
     private WikiTreeRequestType _requestType = WikiTreeRequestType.UNSPECIFIED;
 
-    protected WikiTreeWrapper( @NotNull JSONObject jsonObject ) {
+    protected WikiTreeWrapper( @NotNull final JSONObject jsonObject ) {
 
         super( jsonObject );
 
     }
 
-    protected void setRequestType( @NotNull WikiTreeRequestType requestType ) {
+    protected void setRequestType( @NotNull final WikiTreeRequestType requestType ) {
 
         if ( requestType == WikiTreeRequestType.UNSPECIFIED ) {
 
@@ -50,18 +51,10 @@ public class WikiTreeWrapper extends JSONObject {
 
     }
 
-//    @NotNull
-//    public String getRequestKey() {
-//
-//	return _requestedKey;
-//
-//    }
-//
-//    @NotNull
-//    public String getRequestedFields() {
-//
-//	return _requestedFields;
-//
-//    }
+    public String toString() {
+
+        return "WikiTreeWrapper( " + super.toString() + " )";
+
+    }
 
 }

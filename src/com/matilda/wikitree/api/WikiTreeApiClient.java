@@ -124,12 +124,59 @@ public interface WikiTreeApiClient {
 
     enum BiologicalGender {
 
-        UNKNOWN { public String childGender() { return "child"; }  public String parentGender() { return "parent"; } public String siblingGender() { return "sibling"; } },
-        MALE { public String childGender() { return "son"; }  public String parentGender() { return "father"; } public String siblingGender() { return "brother"; } },
-        FEMALE { public String childGender() { return "daughter"; }  public String parentGender() { return "mother"; } public String siblingGender() { return "sister"; } };
+        UNKNOWN {
+            public String childGender() {
+
+                return "child";
+            }
+
+            public String parentGender() {
+
+                return "parent";
+            }
+
+            public String siblingGender() {
+
+                return "sibling";
+            }
+        },
+        MALE {
+            public String childGender() {
+
+                return "son";
+            }
+
+            public String parentGender() {
+
+                return "father";
+            }
+
+            public String siblingGender() {
+
+                return "brother";
+            }
+        },
+        FEMALE {
+            public String childGender() {
+
+                return "daughter";
+            }
+
+            public String parentGender() {
+
+                return "mother";
+            }
+
+            public String siblingGender() {
+
+                return "sister";
+            }
+        };
 
         public abstract String childGender();
+
         public abstract String parentGender();
+
         public abstract String siblingGender();
 
     }

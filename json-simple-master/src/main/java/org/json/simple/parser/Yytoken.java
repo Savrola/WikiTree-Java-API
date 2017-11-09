@@ -20,13 +20,13 @@ public class Yytoken {
 	public int type=0;
 	public Object value=null;
 	
-	public Yytoken(int type,Object value){
+	public Yytoken( final int type, final Object value){
 		this.type=type;
 		this.value=value;
 	}
 	
 	public String toString(){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		switch(type){
 		case TYPE_VALUE:
 			sb.append("VALUE(").append(value).append(")");

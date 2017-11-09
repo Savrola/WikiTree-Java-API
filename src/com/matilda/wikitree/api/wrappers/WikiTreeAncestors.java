@@ -64,9 +64,9 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
      */
 
     public WikiTreeAncestors(
-            @NotNull WikiTreeId key,
-            @Nullable Integer depth,
-            @NotNull JSONObject resultObject
+            @NotNull final WikiTreeId key,
+            @Nullable final Integer depth,
+            @NotNull final JSONObject resultObject
     )
             throws WikiTreeRequestFailedException {
 
@@ -179,10 +179,10 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
     }
 
     private void rememberParent(
-            SortedMap<Long, WikiTreePersonProfile> profiles,
-            SortedMap<Long, WikiTreePersonProfile> myParent,
-            String relationship,
-            WikiTreePersonProfile personProfile
+            final SortedMap<Long, WikiTreePersonProfile> profiles,
+            final SortedMap<Long, WikiTreePersonProfile> myParent,
+            final String relationship,
+            final WikiTreePersonProfile personProfile
     ) {
 
         Number parentNumber = (Number)WikiTreeApiUtilities.getOptionalJsonValue( Number.class, personProfile, relationship );
@@ -199,7 +199,7 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
 
     }
 
-    private WikiTreePersonProfile buildAncestralTree( WikiTreePersonProfile targetPersonProfile, SortedSet<Long> lineage ) {
+    private WikiTreePersonProfile buildAncestralTree( final WikiTreePersonProfile targetPersonProfile, final SortedSet<Long> lineage ) {
 
         // Is this person a descendant in the line we're working on?
         // For example, is this person a son, grandson, daughter, granddaughter, etc of the current targeted person?
@@ -250,7 +250,7 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
      @param ps where to print it.
      */
 
-    public void printAncestralTree( PrintStream ps ) {
+    public void printAncestralTree( final PrintStream ps ) {
 
         printAncestralTree( ps, true, EMPTY_INDENT, "B", _basePersonProfile );
 
@@ -263,13 +263,19 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
      @param baseProfile the profile at the base of the ancestral tree.
      */
 
-    public void printAnestralTree( PrintStream ps, WikiTreePersonProfile baseProfile ) {
+    public void printAnestralTree( final PrintStream ps, final WikiTreePersonProfile baseProfile ) {
 
         printAncestralTree( ps, true, EMPTY_INDENT, "B", baseProfile );
 
     }
 
-    private void printAncestralTree( PrintStream ps, boolean goingLeft, String fullIndentString, String role, WikiTreePersonProfile profile ) {
+    private void printAncestralTree(
+            final PrintStream ps,
+            final boolean goingLeft,
+            final String fullIndentString,
+            final String role,
+            final WikiTreePersonProfile profile
+    ) {
 
         if ( profile != null ) {
 
@@ -316,7 +322,7 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
      @param line the line to send.
      */
 
-    private void printLine( PrintStream ps, String line ) {
+    private void printLine( final PrintStream ps, final String line ) {
 
         if ( !line.trim().isEmpty() ) {
 

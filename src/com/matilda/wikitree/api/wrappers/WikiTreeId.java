@@ -50,7 +50,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
 //    private final Kind _kind;
 
-    public WikiTreeId( @NotNull String wikiTreeIdString )
+    public WikiTreeId( @NotNull final String wikiTreeIdString )
             throws IllegalArgumentException, ReallyBadNewsError {
 
         super();
@@ -102,6 +102,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
      <p/>ALWAYS yields the same result as a call to {@link #isPersonName()}.
      <p/>Since there are only two kinds of ids managed by this class, a call to this method always yields the opposite result as a call to
      {@link #isSpaceName()}.
+
      @return {@code true} if this instance encapsulates a WikiTreeId Name; {@code false} otherwise.
      */
 
@@ -116,6 +117,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
      <p/>ALWAYS yields the same result as a call to {@link #isIdName()}.
      <p/>Since there are only two kinds of ids managed by this class, a call to this method always yields the opposite result as a call to
      {@link #isSpaceName()}.
+
      @return {@code true} if this instance encapsulates a WikiTreeId Name; {@code false} otherwise.
      */
 
@@ -130,6 +132,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
      <p/>A WikiTree Space Name starts with {@code Space:} and has at least one character after the colon (for example, {@code "Space:Allied_POW_camps"}).
      <p/>Since there are only two kinds of ids managed by this class, a call to this method always yields the opposite result as a call to
      either {@link #isIdName()} or {@link #isPersonName()}.
+
      @return {@code true} if this instance encapsulates a WikiTree Space Name; {@code false} otherwise.
      */
 
@@ -152,7 +155,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
     }
 
-    public boolean equals( Object rhs ) {
+    public boolean equals( final Object rhs ) {
 
         return rhs instanceof WikiTreeId && compareTo( (WikiTreeId)rhs ) == 0;
 

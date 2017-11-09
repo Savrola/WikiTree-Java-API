@@ -21,7 +21,7 @@ import static com.matilda.wikitree.api.util.WikiTreeApiUtilities.doNothing;
 
 public class WrappersApiTestDrive {
 
-    public static void main( String[] args ) {
+    public static void main( final String[] args ) {
 
         // Create ourselves a wrappers-style session.
 
@@ -141,11 +141,11 @@ public class WrappersApiTestDrive {
 
         } catch (
                 IllegalArgumentException |
-                ReallyBadNewsError |
-                IOException |
-                ParseException |
-                WikiTreeRequestFailedException e
-        ) {
+                        ReallyBadNewsError |
+                        IOException |
+                        ParseException |
+                        WikiTreeRequestFailedException e
+                ) {
 
             System.out.flush();
             e.printStackTrace();

@@ -31,11 +31,11 @@ public class JSONParser {
 	public static final int S_IN_ERROR=-1;
 	
 	private LinkedList handlerStatusStack;
-	private Yylex lexer = new Yylex((Reader)null);
+	private final Yylex lexer = new Yylex( (Reader)null);
 	private Yytoken token = null;
 	private int status = S_INIT;
 	
-	private int peekStatus(LinkedList statusStack){
+	private int peekStatus( final LinkedList statusStack){
 		if(statusStack.size()==0)
 			return -1;
 		Integer status=(Integer)statusStack.getFirst();
@@ -59,7 +59,7 @@ public class JSONParser {
      * @throws IOException
      * @throws ParseException
      */
-	public void reset(Reader in){
+	public void reset( final Reader in){
 		lexer.yyreset(in);
 		reset();
 	}
@@ -71,11 +71,11 @@ public class JSONParser {
 		return lexer.getPosition();
 	}
 	
-	public Object parse(String s) throws ParseException{
+	public Object parse( final String s) throws ParseException{
 		return parse(s, (ContainerFactory)null);
 	}
 	
-	public Object parse(String s, ContainerFactory containerFactory) throws ParseException{
+	public Object parse( final String s, final ContainerFactory containerFactory) throws ParseException{
 		StringReader in=new StringReader(s);
 		try{
 			return parse(in, containerFactory);
@@ -88,7 +88,7 @@ public class JSONParser {
 		}
 	}
 	
-	public Object parse(Reader in) throws IOException, ParseException{
+	public Object parse( final Reader in) throws IOException, ParseException{
 		return parse(in, (ContainerFactory)null);
 	}
 	
@@ -108,7 +108,7 @@ public class JSONParser {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public Object parse(Reader in, ContainerFactory containerFactory) throws IOException, ParseException{
+	public Object parse( final Reader in, final ContainerFactory containerFactory) throws IOException, ParseException{
 		reset(in);
 		LinkedList statusStack = new LinkedList();
 		LinkedList valueStack = new LinkedList();
@@ -271,7 +271,7 @@ public class JSONParser {
 			token = new Yytoken(Yytoken.TYPE_EOF, null);
 	}
 	
-	private Map createObjectContainer(ContainerFactory containerFactory){
+	private Map createObjectContainer( final ContainerFactory containerFactory){
 		if(containerFactory == null)
 			return new JSONObject();
 		Map m = containerFactory.createObjectContainer();
@@ -281,7 +281,7 @@ public class JSONParser {
 		return m;
 	}
 	
-	private List createArrayContainer(ContainerFactory containerFactory){
+	private List createArrayContainer( final ContainerFactory containerFactory){
 		if(containerFactory == null)
 			return new JSONArray();
 		List l = containerFactory.creatArrayContainer();
@@ -291,11 +291,11 @@ public class JSONParser {
 		return l;
 	}
 	
-	public void parse(String s, ContentHandler contentHandler) throws ParseException{
+	public void parse( final String s, final ContentHandler contentHandler) throws ParseException{
 		parse(s, contentHandler, false);
 	}
 	
-	public void parse(String s, ContentHandler contentHandler, boolean isResume) throws ParseException{
+	public void parse( final String s, final ContentHandler contentHandler, final boolean isResume) throws ParseException{
 		StringReader in=new StringReader(s);
 		try{
 			parse(in, contentHandler, isResume);
@@ -308,7 +308,7 @@ public class JSONParser {
 		}
 	}
 	
-	public void parse(Reader in, ContentHandler contentHandler) throws IOException, ParseException{
+	public void parse( final Reader in, final ContentHandler contentHandler) throws IOException, ParseException{
 		parse(in, contentHandler, false);
 	}
 	
@@ -326,7 +326,7 @@ public class JSONParser {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public void parse(Reader in, ContentHandler contentHandler, boolean isResume) throws IOException, ParseException{
+	public void parse( final Reader in, final ContentHandler contentHandler, boolean isResume) throws IOException, ParseException{
 		if(!isResume){
 			reset(in);
 			handlerStatusStack = new LinkedList();

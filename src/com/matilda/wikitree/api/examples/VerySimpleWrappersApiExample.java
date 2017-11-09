@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class VerySimpleWrappersApiExample {
 
-    public static void main( String[] args ) {
+    public static void main( final String[] args ) {
 
         // Get ourselves a wrappers-style session instance.
 

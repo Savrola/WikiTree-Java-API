@@ -67,15 +67,15 @@ import java.util.SortedSet;
  using our {@link WikiTreeApiWrappersSession} instance:
  <pre>
  {@code if ( wSession.login( "username@example.com", "hello-world" ) &lbrace;
-     // login worked - the session referenced by wSession is now authenticated
-     System.out.println( "Successful login to WikiTree API server by username@example.com" );
+ // login worked - the session referenced by wSession is now authenticated
+ System.out.println( "Successful login to WikiTree API server by username@example.com" );
  } else {
-     // login failed
-     System.err.println( "*Failed login to WikiTree API server - bye!" );
-     System.exit( 1 );
+ // login failed
+ System.err.println( "*Failed login to WikiTree API server - bye!" );
+ System.exit( 1 );
  }
  </pre>
-
+ <p>
  A couple of things to note here:
  <ul>
  <li>Most of the methods in this API that take a WikiTree ID insist that the WikiTree ID be encapsulated within a {@link WikiTreeId} instance.</li>
@@ -91,7 +91,7 @@ import java.util.SortedSet;
  <p/>If the WikiTreeId constructor concludes that the specified WikiTree ID cannot possibly be valid (doesn't end in a minus followed by a number or has nothing
  in front of the minus sign) then
  The methods in this API that take WikiTree IDs expect the WikiTree ID to be wrapped within a {@link WikiTreeId} instance.
-
+ <p>
  <p/>An instance of this class provides a session-style interface to the WikiTree API server.
  The actual communication with the WikiTree API server is handled by a {@link WikiTreeApiJsonSession} instance which is encapsulated within
  each {@code WikiTreeApiWrappersSession} instance. In other words, calls to most of the methods in this class result in calls to
@@ -105,7 +105,7 @@ import java.util.SortedSet;
  For example, the {@code WikiTreeApiJsonSession} could be wrapped upon creation like this:
  <pre>
  {@code WikiTreeApiWrappersSession wrapper = new WikiTreeApiWrappersSession(
-        new WikiTreeApiJsonSession()
+ new WikiTreeApiJsonSession()
  );}
  </pre>
  or, probably more sensibly, like this:
@@ -159,7 +159,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      @param wikiTreeApiJsonSession the {@code WikiTreeApiJsonSession} which this instance is to wrap.
      */
 
-    public WikiTreeApiWrappersSession( @NotNull WikiTreeApiJsonSession wikiTreeApiJsonSession ) {
+    public WikiTreeApiWrappersSession( @NotNull final WikiTreeApiJsonSession wikiTreeApiJsonSession ) {
 
         super();
 
@@ -211,7 +211,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      @throws ParseException if this client is unable to process the response from the WikiTree API server (definitely see {@link WikiTreeApiJsonSession#login(String, String)} for more information).
      */
 
-    public boolean login( @NotNull String emailAddress, @NotNull String password )
+    public boolean login( @NotNull final String emailAddress, @NotNull final String password )
             throws IOException, ParseException {
 
         if ( _jsonClient.login( emailAddress, password ) ) {
@@ -280,7 +280,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      depending on whether the request specified a WikiTree ID or a numeric Person.Id respectively.
      */
 
-    public WikiTreePersonProfile getPerson( @NotNull WikiTreeId key )
+    public WikiTreePersonProfile getPerson( @NotNull final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -300,7 +300,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreePersonProfile getPerson( long personId )
+    public WikiTreePersonProfile getPerson( final long personId )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -320,7 +320,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 //
 //	}
 
-    public WikiTreePersonProfile getPerson( @NotNull long personId, String fields )
+    public WikiTreePersonProfile getPerson( @NotNull final long personId, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         WikiTreePersonProfile rval = getPerson( "" + personId, fields );
@@ -329,7 +329,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreePersonProfile getPerson( @NotNull WikiTreeId key, String fields )
+    public WikiTreePersonProfile getPerson( @NotNull final WikiTreeId key, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         WikiTreePersonProfile rval = getPerson( key.getValueString(), fields );
@@ -340,56 +340,56 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
 
     /**
-         Request information about a specified person (someone with a WikiTree profile).
+     Request information about a specified person (someone with a WikiTree profile).
 
-         @param key    a {@link String} containing the specified person's WikiTree ID or Person.Id.
-         If this parameter yields a positive value when parsed by {@link Long#longValue()} then it will be treated as a Person.Id.
-         Otherwise, if the string ends in a minus sign followed by a positive number then it will be treated as a WikiTree ID.
-         Any other value will result in an {@link IllegalArgumentException} being thrown.
-         Otherwise, it is assumed to be a WikiTree ID (family name followed by a minus sign followed by a positive number).
-         For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id) to request information about Winston S. Churchill (UK Prime Minister during the Second World War).
-         <p/>
-         This method constructs and returns a {@code WikiTreePersonProfile} instance using the {@link JSONObject} returned by the underlying call to {@link WikiTreeApiJsonSession#getPerson(String, String)} method.
-         <p/>
-         Regardless of what the caller asks for, this method always returns the value of the {@code "Name"} and {@code "IsLiving"} fields as they are required for the proper functioning of the
-         construction of the {@code WikiTreePersonProfile} instance (it's a long story but the {@code "Name"} field contains the pretty-much-essential WikiTree ID of the returned profile
-         and the presence of the {@code "IsLiving"} field is used to verify that call to the WikiTree API server returned a {@code JSONObject} containing the expected sort of "bag of information").
-         <p/>
-         Many of the getters in the resulting {@code WikiTreePersonProfile} instance will either fail (possibly with exceptions being thrown) or return useless or missing information if
-         corresponding fields are not requested.
-         For example, failing to ask for the {@code "Gender"} field will cause invocations of {@link WikiTreePersonProfile#getGender()} on the resulting
-         {@code WikiTreePersonProfile} instance to return {@link com.matilda.wikitree.api.WikiTreeApiClient.BiologicalGender#UNKNOWN}.
-         Another example is that failing to ask for the {@code "Parents"} field will cause invocations of either
-         {@link WikiTreePersonProfile#getBiologicalFather()} or {@link WikiTreePersonProfile#getBiologicalMother()} on the resulting
-         {@code WikiTreePersonProfile} instance to return {@code null} because the profiles returned by {@code WikiTreePersonProfile} class's {@code getBiologicalFather()} and {@code getBiologicalMother()}
-         get their information from the returned {@code JSONObject}'s {@code "Parents"} field.
-         @param fields a comma separated list of the fields that you want returned. Specifying {@code "*"} will get you all the available fields.
-         <p/>
-         See {@link WikiTreeApiUtilities#constructExcludedGetPersonFieldsSet(SortedSet)},
-         {@link WikiTreeApiUtilities#constructExcludedGetPersonFieldsSet(String[])}, and
-         {@link WikiTreeApiUtilities#constructGetPersonFieldsString(String[])}
-         for a relatively painless way to construct a value for this parameter which includes all but a few of the available fields.
-         For example,
-         <blockquote>
-         <pre>
-         WikiTreeApiUtilities.constructGetPersonFieldsString(
-         WikiTreeApiUtilities.constructExcludedGetPersonFieldsSet(
-         "Spouses", "Children", "Siblings"
-         )
-         )
-         </pre>
-         </blockquote>
-         will construct a {@code fields} parameter value which fetches everything except the lists of spouses, children and siblings.
-         <p/>Excluding the {@code "Spouses"}, {@code "Children"}, and {@code "Siblings"} fields probably makes sense in a lot of situations as it has the potential to
-         reduce the size of the response by eliminating potentially a fair number of profiles.
-         @return A {@link WikiTreePersonProfile} containing the profile information for the specified person, their parents, their siblings, and their children.
-         @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
-         @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
-         If you do see one, you have probably encountered a bug in this software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
-         to reproduce the problem).
-         */
+     @param key    a {@link String} containing the specified person's WikiTree ID or Person.Id.
+     If this parameter yields a positive value when parsed by {@link Long#longValue()} then it will be treated as a Person.Id.
+     Otherwise, if the string ends in a minus sign followed by a positive number then it will be treated as a WikiTree ID.
+     Any other value will result in an {@link IllegalArgumentException} being thrown.
+     Otherwise, it is assumed to be a WikiTree ID (family name followed by a minus sign followed by a positive number).
+     For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id) to request information about Winston S. Churchill (UK Prime Minister during the Second World War).
+     <p/>
+     This method constructs and returns a {@code WikiTreePersonProfile} instance using the {@link JSONObject} returned by the underlying call to {@link WikiTreeApiJsonSession#getPerson(String, String)} method.
+     <p/>
+     Regardless of what the caller asks for, this method always returns the value of the {@code "Name"} and {@code "IsLiving"} fields as they are required for the proper functioning of the
+     construction of the {@code WikiTreePersonProfile} instance (it's a long story but the {@code "Name"} field contains the pretty-much-essential WikiTree ID of the returned profile
+     and the presence of the {@code "IsLiving"} field is used to verify that call to the WikiTree API server returned a {@code JSONObject} containing the expected sort of "bag of information").
+     <p/>
+     Many of the getters in the resulting {@code WikiTreePersonProfile} instance will either fail (possibly with exceptions being thrown) or return useless or missing information if
+     corresponding fields are not requested.
+     For example, failing to ask for the {@code "Gender"} field will cause invocations of {@link WikiTreePersonProfile#getGender()} on the resulting
+     {@code WikiTreePersonProfile} instance to return {@link com.matilda.wikitree.api.WikiTreeApiClient.BiologicalGender#UNKNOWN}.
+     Another example is that failing to ask for the {@code "Parents"} field will cause invocations of either
+     {@link WikiTreePersonProfile#getBiologicalFather()} or {@link WikiTreePersonProfile#getBiologicalMother()} on the resulting
+     {@code WikiTreePersonProfile} instance to return {@code null} because the profiles returned by {@code WikiTreePersonProfile} class's {@code getBiologicalFather()} and {@code getBiologicalMother()}
+     get their information from the returned {@code JSONObject}'s {@code "Parents"} field.
+     @param fields a comma separated list of the fields that you want returned. Specifying {@code "*"} will get you all the available fields.
+     <p/>
+     See {@link WikiTreeApiUtilities#constructExcludedGetPersonFieldsSet(SortedSet)},
+     {@link WikiTreeApiUtilities#constructExcludedGetPersonFieldsSet(String[])}, and
+     {@link WikiTreeApiUtilities#constructGetPersonFieldsString(String[])}
+     for a relatively painless way to construct a value for this parameter which includes all but a few of the available fields.
+     For example,
+     <blockquote>
+     <pre>
+     WikiTreeApiUtilities.constructGetPersonFieldsString(
+     WikiTreeApiUtilities.constructExcludedGetPersonFieldsSet(
+     "Spouses", "Children", "Siblings"
+     )
+     )
+     </pre>
+     </blockquote>
+     will construct a {@code fields} parameter value which fetches everything except the lists of spouses, children and siblings.
+     <p/>Excluding the {@code "Spouses"}, {@code "Children"}, and {@code "Siblings"} fields probably makes sense in a lot of situations as it has the potential to
+     reduce the size of the response by eliminating potentially a fair number of profiles.
+     @return A {@link WikiTreePersonProfile} containing the profile information for the specified person, their parents, their siblings, and their children.
+     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
+     If you do see one, you have probably encountered a bug in this software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
+     */
 
-    public WikiTreePersonProfile getPerson( @NotNull String key, String fields )
+    public WikiTreePersonProfile getPerson( @NotNull final String key, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         // We need the request to include the "Name" field.
@@ -448,7 +448,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 //    };
 //
 
-    public WikiTreeProfile getProfile( WikiTreeId key )
+    public WikiTreeProfile getProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         Optional<JSONObject> optResultObject = _jsonClient.getProfile( key );
@@ -469,7 +469,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreeProfile getProfile( long id )
+    public WikiTreeProfile getProfile( final long id )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         Optional<JSONObject> optResultObject = _jsonClient.getProfile( id );
@@ -490,23 +490,25 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreePersonProfile getPersonProfile( long personId )
+    public WikiTreePersonProfile getPersonProfile( final long personId )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
-        WikiTreeProfile profile =  getProfile( personId );
+        WikiTreeProfile profile = getProfile( personId );
         if ( profile == null || profile instanceof WikiTreePersonProfile ) {
 
             return (WikiTreePersonProfile)profile;
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  personId \"" + personId + "\" refers to a Space, not a Person" );
+            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  personId \"" +
+                                                personId +
+                                                "\" refers to a Space, not a Person" );
 
         }
 
     }
 
-    public WikiTreePersonProfile getPersonProfile( WikiTreeId key )
+    public WikiTreePersonProfile getPersonProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         WikiTreeProfile profile = getProfile( key );
@@ -524,12 +526,13 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     /**
      Get a 'just the basic facts' profile for a specified person.
+
      @param personId The specified person's long {@code Person.Id}.
      @return a {@link WikiTreePersonProfile} containing the person's
      {@code Id}, {@code Name}, {@code Derived.ShortName}, {@code LastNameAtBirth}, {@code Gender},
      {@code BirthDate}, {@code DeathDate}, {@code BirthDateDecade}, and {@code DeathDateDecade}.
-     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
-     @throws ParseException if this client is unable to process the response from the WikiTree API server.
+     @throws IOException                    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException                 if this client is unable to process the response from the WikiTree API server.
      Seeing this exception should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this software.
      Please notify danny@matilda.com if you get this exception (be prepared to work with Danny to reproduce the problem).
      @throws WikiTreeRequestFailedException if the WikiTree API server returned a result which is not a profile.
@@ -550,12 +553,13 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     /**
      Get a 'just the basic facts' profile for a specified person.
+
      @param wikiTreeId The specified person's WikiTree ID.
      @return a {@link WikiTreePersonProfile} containing the person's
      {@code Id}, {@code Name}, {@code Derived.ShortName}, {@code LastNameAtBirth}, {@code Gender},
      {@code BirthDate}, {@code DeathDate}, {@code BirthDateDecade}, and {@code DeathDateDecade}.
-     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
-     @throws ParseException if this client is unable to process the response from the WikiTree API server.
+     @throws IOException                    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException                 if this client is unable to process the response from the WikiTree API server.
      Seeing this exception should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this software.
      Please notify danny@matilda.com if you get this exception (be prepared to work with Danny to reproduce the problem).
      @throws WikiTreeRequestFailedException if the WikiTree API server returned a result which is not a profile.
@@ -574,7 +578,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreeBiography getBio( WikiTreeId key )
+    public WikiTreeBiography getBio( final WikiTreeId key )
             throws IOException, ParseException {
 
         Optional<JSONObject> optResultObject = _jsonClient.getBio( key );
@@ -585,18 +589,19 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     public WikiTreeWatchlist getWatchlist(
-            Boolean getPerson,
-            Boolean getSpace,
-            Boolean onlyLiving,
-            Boolean excludeLiving,
-            String fields,
-            Integer limit,
-            Integer offset,
-            String order
+            final Boolean getPerson,
+            final Boolean getSpace,
+            final Boolean onlyLiving,
+            final Boolean excludeLiving,
+            final String fields,
+            final Integer limit,
+            final Integer offset,
+            final String order
     )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
-        Optional<JSONObject> optResultObject = _jsonClient.getWatchlist( getPerson, getSpace, onlyLiving, excludeLiving, fields, limit, offset, order );
+        Optional<JSONObject> optResultObject =
+                _jsonClient.getWatchlist( getPerson, getSpace, onlyLiving, excludeLiving, fields, limit, offset, order );
 
         if ( optResultObject.isPresent() ) {
 
@@ -610,7 +615,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreeAncestors getAncestors( WikiTreeId key, Integer depth )
+    public WikiTreeAncestors getAncestors( final WikiTreeId key, final Integer depth )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         Optional<JSONObject> optRequestObject = _jsonClient.getAncestors( key, depth );
@@ -626,7 +631,13 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
         }
     }
 
-    public WikiTreeRelatives getRelatives( String keys, boolean getParents, boolean getChildren, boolean getSpouses, boolean getSiblings )
+    public WikiTreeRelatives getRelatives(
+            final String keys,
+            final boolean getParents,
+            final boolean getChildren,
+            final boolean getSpouses,
+            final boolean getSiblings
+    )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         Optional<JSONObject> optRequestObject = _jsonClient.getRelatives( keys, getParents, getChildren, getSpouses, getSiblings );

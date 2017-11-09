@@ -24,7 +24,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
     private final JSONObject _originalJSONObject;
 
-    protected WikiTreeProfile( @NotNull JSONObject jsonObject, String[] profileLocation ) throws WikiTreeRequestFailedException {
+    protected WikiTreeProfile( @NotNull final JSONObject jsonObject, final String[] profileLocation ) throws WikiTreeRequestFailedException {
 //        super( jsonObject );
         super( findProfile( jsonObject, profileLocation )
 
@@ -34,7 +34,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
     }
 
-    private static JSONObject findProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation )
+    private static JSONObject findProfile( @NotNull final JSONObject jsonObject, final String[] profileLocation )
             throws WikiTreeRequestFailedException {
 
 
@@ -88,7 +88,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
      */
 
     @Nullable
-    public static WikiTreeProfile distinguish( JSONObject jsonObject ) throws WikiTreeRequestFailedException {
+    public static WikiTreeProfile distinguish( final JSONObject jsonObject ) throws WikiTreeRequestFailedException {
 
 //        WikiTreeApiUtilities.prettyPrintJsonThing( "distinguishing ", jsonObject );
 
@@ -104,7 +104,8 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
             Object isPersonObj = profile.get( "IsPerson" );
             if ( isPersonObj instanceof Number ? ( (Number)isPersonObj ).longValue() == 1L : "1".equals( isPersonObj ) ) {
 
-                WikiTreePersonProfile personProfile = new WikiTreePersonProfile( null, jsonObject, WikiTreePersonProfile.ProfileType.PROFILE, "profile" );
+                WikiTreePersonProfile personProfile =
+                        new WikiTreePersonProfile( null, jsonObject, WikiTreePersonProfile.ProfileType.PROFILE, "profile" );
 
                 rval = personProfile;
 
@@ -144,7 +145,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
      Get this instance's manager's {@code Person.Id}.
 
      @return this instance's {@code Person.Id} as a {@code long} value.
-     @throws NullPointerException if this instance has no \"Manager\" field.
+     @throws NullPointerException  if this instance has no \"Manager\" field.
      @throws NumberFormatException if this instance's {@code "Manager"} field is something other than a {@link Number} or a {@link String}
      which can be parsed by {@link Long#parseLong(String)} as a positive long value.
      */
@@ -168,6 +169,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
         if ( managerPersonId instanceof String ) {
 
+            //noinspection CaughtExceptionImmediatelyRethrown
             try {
 
                 long id = Long.parseLong( (String)managerPersonId );
@@ -181,7 +183,6 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
             } catch ( NumberFormatException e ) {
 
-//                throw new NumberFormatException( "profile's \"Manager\" field is a string which does not parse as a positive long - " + this, e );
                 // Provide a place for a breakpoint.
 
                 throw e;

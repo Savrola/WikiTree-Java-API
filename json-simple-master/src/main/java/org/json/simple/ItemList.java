@@ -16,22 +16,22 @@ import java.util.StringTokenizer;
  */
 public class ItemList {
 	private String sp=",";
-	List items=new ArrayList();
+	final List items=new ArrayList();
 	
 	
 	public ItemList(){}
 	
 	
-	public ItemList(String s){
+	public ItemList( final String s){
 		this.split(s,sp,items);
 	}
 	
-	public ItemList(String s,String sp){
+	public ItemList( final String s, final String sp){
 		this.sp=s;
 		this.split(s,sp,items);
 	}
 	
-	public ItemList(String s,String sp,boolean isMultiToken){
+	public ItemList( final String s, final String sp, final boolean isMultiToken){
 		split(s,sp,items,isMultiToken);
 	}
 	
@@ -43,7 +43,7 @@ public class ItemList {
 		return (String[])this.items.toArray();
 	}
 	
-	public void split(String s,String sp,List append,boolean isMultiToken){
+	public void split( final String s, final String sp, final List append, final boolean isMultiToken){
 		if(s==null || sp==null)
 			return;
 		if(isMultiToken){
@@ -57,7 +57,7 @@ public class ItemList {
 		}
 	}
 	
-	public void split(String s,String sp,List append){
+	public void split( final String s, final String sp, final List append){
 		if(s==null || sp==null)
 			return;
 		int pos=0;
@@ -73,35 +73,35 @@ public class ItemList {
 		append.add(s.substring(prevPos).trim());
 	}
 	
-	public void setSP(String sp){
+	public void setSP( final String sp){
 		this.sp=sp;
 	}
 	
-	public void add(int i,String item){
+	public void add( final int i, final String item){
 		if(item==null)
 			return;
 		items.add(i,item.trim());
 	}
 
-	public void add(String item){
+	public void add( final String item){
 		if(item==null)
 			return;
 		items.add(item.trim());
 	}
 	
-	public void addAll(ItemList list){
+	public void addAll( final ItemList list){
 		items.addAll(list.items);
 	}
 	
-	public void addAll(String s){
+	public void addAll( final String s){
 		this.split(s,sp,items);
 	}
 	
-	public void addAll(String s,String sp){
+	public void addAll( final String s, final String sp){
 		this.split(s,sp,items);
 	}
 	
-	public void addAll(String s,String sp,boolean isMultiToken){
+	public void addAll( final String s, final String sp, final boolean isMultiToken){
 		this.split(s,sp,items,isMultiToken);
 	}
 	
@@ -109,7 +109,7 @@ public class ItemList {
 	 * @param i 0-based
 	 * @return
 	 */
-	public String get(int i){
+	public String get( final int i){
 		return (String)items.get(i);
 	}
 	
@@ -121,8 +121,8 @@ public class ItemList {
 		return toString(sp);
 	}
 	
-	public String toString(String sp){
-		StringBuffer sb=new StringBuffer();
+	public String toString( final String sp){
+		StringBuilder sb=new StringBuilder();
 		
 		for(int i=0;i<items.size();i++){
 			if(i==0)
