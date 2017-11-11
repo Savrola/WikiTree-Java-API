@@ -721,7 +721,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
             throw new IllegalArgumentException( "WikiTreePersonProfile.getBirthName():  \"" +
                                                 getShortName() +
-                                                "\" has no birth name (please notify danny@matilda.com)" );
+                                                "\" (" + getWikiTreeId() + ") has no birth name (please notify danny@matilda.com)" );
 
         }
 
