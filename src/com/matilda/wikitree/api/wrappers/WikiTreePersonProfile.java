@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  A WikiTree person profile.
  */
 
-@SuppressWarnings({ "unused", "WeakerAccess" })
+@SuppressWarnings("unchecked")
 public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public static final String BIRTH_DATE = "BirthDate";
@@ -198,7 +198,9 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             //noinspection unchecked
             throw new ReallyBadNewsError(
                     "WikiTreePersonProfile:  we did not handle (" + requestType + ", " + jsonObject + ", " +
-                    WikiTreeApiUtilities.formatPath( profileLocation ) + " ) correctly; we saved {" + new HashMap( this ) + "}"
+                    WikiTreeApiUtilities.formatPath( profileLocation ) + " ) correctly; we saved {" +
+                    new HashMap( this ) +
+                    "}"
             );
 
         }
@@ -646,7 +648,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         Optional<Object> optRval = getOptionalValue( jsonKey );
 
-        //noinspection unchecked
         return (T)optRval.orElseGet( alternative );
 
     }
@@ -717,11 +718,17 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         String birthName = (String)get( BIRTH_NAME );
         if ( birthName == null || birthName.trim().isEmpty() ) {
 
-            // Seriously??? How can a profile not have a birth name?
+            birthName = (String)get( BIRTH_NAME_PRIVATE );
 
-            throw new IllegalArgumentException( "WikiTreePersonProfile.getBirthName():  \"" +
-                                                getShortName() +
-                                                "\" (" + getWikiTreeId() + ") has no birth name (please notify danny@matilda.com)" );
+            if ( birthName == null || birthName.trim().isEmpty() ) {
+
+                // Seriously??? How can a profile not have a birth name?
+
+                throw new IllegalArgumentException( "WikiTreePersonProfile.getBirthName():  \"" +
+                                                    getShortName() +
+                                                    "\" (" + getWikiTreeId() + ") has no birth name (please notify danny@matilda.com)" );
+
+            }
 
         }
 

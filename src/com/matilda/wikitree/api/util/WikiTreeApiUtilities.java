@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  Useful utility methods.
  */
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "unchecked" })
 public class WikiTreeApiUtilities {
 
     /**
@@ -200,8 +200,6 @@ public class WikiTreeApiUtilities {
         int month = monthString == null ? 0 : Integer.parseInt( monthString );
         int dayOfMonth = dayOfMonthString == null ? 0 : Integer.parseInt( dayOfMonthString );
 
-        String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
-
         if ( dayOfMonth == 0 ) {
 
             if ( month == 0 ) {
@@ -217,6 +215,8 @@ public class WikiTreeApiUtilities {
                 }
 
             } else {
+
+                String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
 
                 if ( handleInOn ) {
 
@@ -235,6 +235,8 @@ public class WikiTreeApiUtilities {
             throw new IllegalArgumentException( "month must be non-zero if day is non-zero (date is " + dateString + ")" );
 
         } else {
+
+            String monthName = longMonthName ? s_longMonthNames[month - 1] : s_shortMonthNames[month - 1];
 
             if ( handleInOn ) {
 
@@ -469,31 +471,6 @@ public class WikiTreeApiUtilities {
         }
 
         return sb.toString();
-
-    }
-
-    /**
-     Determine if a string represents a value which can be used as a Space.Id or a Person.Id.
-     <p/>Note that this method doesn't really have anything to do with WikITree Ids. It should probably find a better home.
-
-     @param numericIdString the id string.
-     @return {@code true} if the specified id string yields a positive value when parsed using {@link Long#parseLong(String)};
-     {@code false} otherwise.
-     */
-
-    public static boolean isValidNumericIdString( @NotNull final String numericIdString ) {
-
-        try {
-
-            long id = Long.parseLong( numericIdString );
-
-            return id > 0;
-
-        } catch ( NumberFormatException e ) {
-
-            return false;
-
-        }
 
     }
 
@@ -1368,7 +1345,6 @@ public class WikiTreeApiUtilities {
 
         if ( requiredClass != null ) {
 
-            //noinspection unchecked
             if ( requiredClass.isAssignableFrom( rval.getClass() ) ) {
 
                 return rval;
@@ -1412,7 +1388,6 @@ public class WikiTreeApiUtilities {
 
         if ( requiredClass != null ) {
 
-            //noinspection unchecked
             if ( requiredClass.isAssignableFrom( rval.getClass() ) ) {
 
                 return rval;
@@ -1460,12 +1435,10 @@ public class WikiTreeApiUtilities {
         StringBuilder sb = new StringBuilder();
 
         String comma = "";
-        int consumedFieldCount = 0;
         if ( resultObject.containsKey( "status" ) ) {
 
             sb.append( "status=\"" ).append( resultObject.get( "status" ) ).append( '"' );
             comma = ", ";
-            consumedFieldCount += 1;
 
         }
 

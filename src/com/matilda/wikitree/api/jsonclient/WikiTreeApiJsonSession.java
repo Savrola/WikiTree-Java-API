@@ -28,7 +28,7 @@ import java.util.Vector;
  for more information about the original WikiTree API (intended for use within web pages).
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused", "SameParameterValue" })
+@SuppressWarnings({ "WeakerAccess", "unused", "SameParameterValue", "unchecked" })
 public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     /**

@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
  * |a:| => |a|,||
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
+@SuppressWarnings("unchecked")
 public class ItemList {
 	private String sp=",";
 	final List items=new ArrayList();
