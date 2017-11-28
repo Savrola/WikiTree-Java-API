@@ -126,6 +126,55 @@ public class WikiTreeApiUtilities {
     }
 
     /**
+     A helper method that makes it easier to format dates when starting with an
+     {@link Optional}&lt;{@link String}&gt;.
+
+     @param optDateString    an {@link Optional}&lt;{@link String}&gt; which is either empty or contains a date string
+     in {@code YYYY-MM-DD} format.
+     @param longMonthName if {@code true} then the returned value uses long month names
+     (e.g. {@code January}, {@code February}, etc);
+     otherwise, the returned value uses three letter month names (e.g. {@code Jan}, {@code Feb}, etc).
+     @param handleInOn    if {@code true} then the date is prefixed with {@code "on "}
+     if it is exact (has a year, month and day of month)
+     and is prefixed with {@code "in "} if it is in-exact
+     (is missing the month and day of month, or missing just the day of month); if {@code false} then
+     just the naked date is returned.
+     @return an {@link Optional}&lt;{@link String}&gt;
+     containing the formatted date if {@code optDateString} contains a valid date in {@code YYYY-MM-DD} format;
+     an empty {@link Optional}&lt;{@link String}&gt; otherwise (if {@code optDateString}
+     was either empty or contains something that is not a valid date in {@code YYYY-MM-DD} format).
+     <p>Note that unlike the other {@code formatDate()} methods, this helper method does not throw an
+     {@link IllegalArgumentException} if formatting fails.</p>
+     */
+
+    @NotNull
+    public static Optional<String> formatDate(
+            @SuppressWarnings("OptionalUsedAsFieldOrParameterType") @NotNull final Optional<String> optDateString,
+            final boolean longMonthName,
+            final boolean handleInOn
+    ) {
+
+        if ( optDateString.isPresent() ) {
+
+            try {
+
+                return Optional.of( formatDate( optDateString.get(), longMonthName, handleInOn ) );
+
+            } catch ( IllegalArgumentException e ) {
+
+                return Optional.empty();
+
+            }
+
+        } else {
+
+            return Optional.empty();
+
+        }
+
+    }
+
+    /**
      Format a date extracted from the WikiTree database.
 
      @param dateString    the date string in {@code YYYY-MM-DD} format.
@@ -141,7 +190,12 @@ public class WikiTreeApiUtilities {
      In case you're wondering why 1957-10-04 was used as the example date, the launch of Sputnik on that date marked the start of the space age.
      */
 
-    public static String formatDate( @NotNull final String dateString, final boolean longMonthName, final boolean handleInOn ) {
+    @NotNull
+    public static String formatDate(
+            @NotNull final String dateString,
+            final boolean longMonthName,
+            final boolean handleInOn
+    ) throws IllegalArgumentException {
 
         if ( "<<unknown>>".equals( dateString ) ) {
 
