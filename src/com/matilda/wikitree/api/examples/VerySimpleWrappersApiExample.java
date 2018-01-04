@@ -55,21 +55,27 @@ public class VerySimpleWrappersApiExample {
 
             // Let's exercise each of the types of requests.
 
-            // Get Sir Winston S. Churchill's person profile via a getPerson request and print it out.
+            // Get Sir Winston S. Churchill's person profile via a getPerson request using his Person.Id and print it out.
 
-            WikiTreePersonProfile churchillsProfile = session.getPerson( new WikiTreeId( "5589" ) );
-            WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile", churchillsProfile );
+            WikiTreePersonProfile churchillsProfile = session.getPerson( 5589 );
+            WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile via Person.Id", churchillsProfile );
+
+            // Get Sir Winston S. Churchill's person profile via a getPerson request using his WikiTreeId and print it out.
+
+            churchillsProfile = session.getPerson( new WikiTreeId( "Churchill-4" ) );
+            long churchillPersonId = churchillsProfile.getPersonId();
+            WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile via Churchill-4", churchillsProfile );
 
             // Get Winston S. Churchill's person profile via a getProfile request and print that out.
             // This is not much different from a getPerson request other than that a getProfile request
             // doesn't also get any of the target person's relatives.
 
-            churchillsProfile = session.getPersonProfile( new WikiTreeId( "5589" ) );
+            churchillsProfile = session.getPersonProfile( new WikiTreeId( "Churchill-4" ) );
             WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile", churchillsProfile );
 
             // Get Winston's biography.
 
-            WikiTreeBiography churchillsBiography = session.getBio( new WikiTreeId( "5589" ) );
+            WikiTreeBiography churchillsBiography = session.getBio( churchillsProfile.getWikiTreeId() );
             WikiTreeApiUtilities.prettyPrintJsonThing( "Winston's biography", churchillsBiography );
 
             // Let's get the logged in user's watch list (we'll put a small limit on the request to keep the amount of output reasonable).
@@ -82,7 +88,7 @@ public class VerySimpleWrappersApiExample {
             // We are also limiting the output to three generations (Winston, his parents and their parents) to keep things reasonable.
             // Note that if we want three generations of Churchills then we ask for two (the target person's generation doesn't count).
 
-            WikiTreeAncestors churchillsAncestors = session.getAncestors( new WikiTreeId( "5589" ), 2 );
+            WikiTreeAncestors churchillsAncestors = session.getAncestors( 5589, 2 );
             WikiTreeApiUtilities.prettyPrintJsonThing( "Winston's ancestors", churchillsAncestors );
 
             // Let's see the ancestral tree in an easier to comprehend format.

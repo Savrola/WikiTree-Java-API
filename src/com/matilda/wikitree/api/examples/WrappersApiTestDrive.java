@@ -54,6 +54,50 @@ public class WrappersApiTestDrive {
                     churchillPersonById
             );
 
+            {
+                String relativeKeys = "5589,Hozier-1,Churchill-4";
+                WikiTreeRelatives relatives = request.getRelatives( relativeKeys, true, true, true, true );
+                System.out.println( "getRelatives( all types ) for \"" + relativeKeys + "\":  " + relatives );
+                System.out.println(
+                        "" + relatives.getBasePeopleByKey().size() + " relatives returned, " +
+                        relatives.getBasePeopleByWikiTreeID().size() + " by WikiTreeID and " +
+                        relatives.getBasePeopleByPersonId().size() + " by Person.Id"
+                );
+                System.out.println( "keys yielding relatives: " + relatives.getBasePeopleByKey().keySet() );
+                System.out.println( "WikiTree IDs yielding relatives: " + relatives.getBasePeopleByWikiTreeID().keySet() );
+                System.out.println( "Person.Ids yielding relatives: " + relatives.getBasePeopleByPersonId().keySet() );
+                WikiTreeApiUtilities.prettyPrintJsonThing(
+                        "relatives of 5589",
+                        relatives.getBasePeopleByPersonId().get( 5589L ).getChildren()
+                );
+                WikiTreeApiUtilities.prettyPrintJsonThing(
+                        "everything by WikiTree ID",
+                        relatives.getBasePeopleByWikiTreeID()
+                );
+            }
+
+            {
+                String relativeKeys = "Churchill-4";
+                WikiTreeRelatives relatives = request.getRelatives( relativeKeys, true, true, true, true );
+                System.out.println( "getRelatives( all types ) for \"" + relativeKeys + "\":  " + relatives );
+                System.out.println(
+                        "" + relatives.getBasePeopleByKey().size() + " relatives returned, " +
+                        relatives.getBasePeopleByWikiTreeID().size() + " by WikiTreeID and " +
+                        relatives.getBasePeopleByPersonId().size() + " by Person.Id"
+                );
+                System.out.println( "keys yielding relatives: " + relatives.getBasePeopleByKey().keySet() );
+                System.out.println( "WikiTree IDs yielding relatives: " + relatives.getBasePeopleByWikiTreeID().keySet() );
+                System.out.println( "Person.Ids yielding relatives: " + relatives.getBasePeopleByPersonId().keySet() );
+                WikiTreeApiUtilities.prettyPrintJsonThing(
+                        "relatives of 5589",
+                        relatives.getBasePeopleByPersonId().get( 5589L ).getChildren()
+                );
+                WikiTreeApiUtilities.prettyPrintJsonThing(
+                        "everything by WikiTree ID",
+                        relatives.getBasePeopleByWikiTreeID()
+                );
+            }
+
             WikiTreePersonProfile churchillProfile2 = request.getPersonProfile( new WikiTreeId( "Churchill-4" ) );
             System.out.println( "Churchill's profile via getPersonProfile is " + churchillProfile2 );
             WikiTreeApiUtilities.prettyPrintJsonThing(
@@ -64,7 +108,7 @@ public class WrappersApiTestDrive {
             WikiTreePersonProfile bouletProfile = request.getPersonProfile( new WikiTreeId( "Boulet-169" ) );
             WikiTreeApiUtilities.prettyPrintJsonThing( "boulet profile", bouletProfile );
             WikiTreePersonProfile bouletManagerProfile =
-                    request.getPersonProfile( bouletProfile.getManagerPersonId() );
+                    request.getPersonProfile( new WikiTreeId( "Boulet-169" ) );
             WikiTreeApiUtilities.prettyPrintJsonThing( "boulet manager profile", bouletManagerProfile );
             WikiTreePersonProfile bouletManagerPerson = request.getPerson( bouletProfile.getManagerPersonId() );
             WikiTreeApiUtilities.prettyPrintJsonThing( "boulet manager person", bouletManagerPerson );
@@ -111,26 +155,6 @@ public class WrappersApiTestDrive {
             WikiTreeAncestors onilBoutinAncestors = request.getAncestors( new WikiTreeId( "Boutin-148" ), 5 );
             WikiTreeApiUtilities.prettyPrintJsonThing( "Boutin=148's ancestors", onilBoutinAncestors );
             System.out.println( "Boutin-148's ancestors is " + onilBoutinAncestors );
-
-            String relativeKeys = "5589,Hozier-1,Churchill-4";
-            WikiTreeRelatives relatives = request.getRelatives( relativeKeys, true, true, true, true );
-            System.out.println( "getRelatives( all types ) for \"" + relativeKeys + "\":  " + relatives );
-            System.out.println(
-                    "" + relatives.getBasePeopleByKey().size() + " relatives returned, " +
-                    relatives.getBasePeopleByWikiTreeID().size() + " by WikiTreeID and " +
-                    relatives.getBasePeopleByPersonId().size() + " by Person.Id"
-            );
-            System.out.println( "keys yielding relatives: " + relatives.getBasePeopleByKey().keySet() );
-            System.out.println( "WikiTree IDs yielding relatives: " + relatives.getBasePeopleByWikiTreeID().keySet() );
-            System.out.println( "Person.Ids yielding relatives: " + relatives.getBasePeopleByPersonId().keySet() );
-            WikiTreeApiUtilities.prettyPrintJsonThing(
-                    "relatives of 5589",
-                    relatives.getBasePeopleByPersonId().get( 5589L ).getChildren()
-            );
-            WikiTreeApiUtilities.prettyPrintJsonThing(
-                    "everything by WikiTree ID",
-                    relatives.getBasePeopleByWikiTreeID()
-            );
 
             System.out.println(
                     "timing stats for actual calls to remote WikiTree API server:  " +

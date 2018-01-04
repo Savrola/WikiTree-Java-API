@@ -114,10 +114,10 @@ public class WikiTreeApiUtilities {
 
         SortedMap<String, GetRelatives> relativeKeys = new TreeMap<>();
 
-        relativeKeys.put( "Children", ( paramName, personProfile ) -> personProfile.getChildren() );
-        relativeKeys.put( "Siblings", ( paramName, personProfile ) -> personProfile.getSiblings() );
-        relativeKeys.put( "Spouses", ( paramName, personProfile ) -> personProfile.getSpouses() );
-        relativeKeys.put( "Parents", ( paramName, personProfile ) -> personProfile.getParents() );
+        relativeKeys.put( "Children", personProfile -> personProfile.getChildren() );
+        relativeKeys.put( "Siblings", personProfile -> personProfile.getSiblings() );
+        relativeKeys.put( "Spouses", personProfile -> personProfile.getSpouses() );
+        relativeKeys.put( "Parents", personProfile -> personProfile.getParents() );
 
         RELATIVE_GETTERS = Collections.unmodifiableSortedMap( relativeKeys );
 
@@ -340,8 +340,7 @@ public class WikiTreeApiUtilities {
 
     private interface GetRelatives {
 
-        Collection<WikiTreePersonProfile> getRelatives(
-                String paramName,
+        Optional<Collection<WikiTreePersonProfile>> getRelatives(
                 final WikiTreePersonProfile personProfile
         );
 
@@ -677,7 +676,7 @@ public class WikiTreeApiUtilities {
 
             if ( _currentOutputLine != null ) {
 
-                println( _lastOutputLine );
+                println( _currentOutputLine );
 
             }
 
@@ -1034,7 +1033,7 @@ public class WikiTreeApiUtilities {
         if ( name != null ) {
 
             if ( "5584".equals( name ) ) {
-                WikiTreeApiUtilities.doNothing();
+                doNothing();
             }
 
             plm.append( enquoteJavaString( name ) ).append( " : " );
@@ -1072,24 +1071,122 @@ public class WikiTreeApiUtilities {
                     // If we are printing the relatives in a WTPP instance then use the getters in that class
                     // so that we print the wrapped relatives' profiles instead of the raw profiles.
                     //
-                    // THe primary benefit of this in the immediate sense is that the code above which prefixes WTPP instances
+                    // The primary benefit of this in the immediate sense is that the code above which prefixes WTPP instances
                     // with their profile type will properly prefix these relatives' instances. There is a potential secondary
                     // benefit should we insert more special handling of WTPP instances in this set of pretty-printing methods.
 
-                    if ( iThing instanceof WikiTreePersonProfile && RELATIVE_GETTERS.containsKey( paramName ) ) {
 
-//                        System.out.println( "dealing with " + ( (String)paramName ).toLowerCase() );
-                        GetRelatives getter = RELATIVE_GETTERS.get( paramName );
-                        Collection<WikiTreePersonProfile> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
-                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), relatives, plm );
+                    boolean hasRelatives = false;
 
-                        WikiTreeApiUtilities.doNothing();
+                    GetRelatives getter = RELATIVE_GETTERS.get( paramName );
+                    if ( iThing instanceof WikiTreePersonProfile && getter != null ) {
 
-                    } else {
+                        Optional<Collection<WikiTreePersonProfile>> relatives = getter.getRelatives(
+                                (WikiTreePersonProfile)iThing
+                        );
+
+                        if ( relatives.isPresent() ) {
+
+                            prettyFormatJsonThing(
+                                    indent + 1,
+                                    String.valueOf( paramName ),
+                                    relatives,
+                                    plm
+                            );
+
+                            hasRelatives = true;
+
+                        }
+
+                    }
+
+                    if ( !hasRelatives ) {
 
                         prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
 
+                        doNothing();
+
                     }
+
+                }
+
+            }
+
+//                    else {
+//
+//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
+//
+//                        doNothing();
+//
+//                    }
+
+//                        } else {
+//
+//                            Optional<Collection<WikiTreePersonProfile>> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
+//
+//                            if ( relatives.isPresent() ) {
+//
+//                                prettyFormatJsonThing(
+//                                        indent + 1,
+//                                        String.valueOf( paramName ),
+//                                        relatives,
+//                                        plm
+//                                );
+//
+//                            } else {
+//
+//                                prettyFormatJsonThing(
+//                                        indent + 1,
+//                                        String.valueOf( paramName ),
+//                                        paramValue,
+//                                        plm
+//                                );
+//
+//                            }
+//
+//                        }
+//
+//                    } else {
+//
+//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
+//
+//                        doNothing();
+//
+//                    }
+//
+//                    if (
+//                            iThing instanceof WikiTreePersonProfile &&
+//                            RELATIVE_GETTERS.containsKey( paramName )
+//                    ) {
+//
+////                        System.out.println( "dealing with " + ( (String)paramName ).toLowerCase() );
+//                        if ( ((WikiTreePersonProfile)iThing).isFullProfile() ) {
+//
+//                            GetRelatives getter = RELATIVE_GETTERS.get( paramName );
+//                            Optional<Collection<WikiTreePersonProfile>> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
+//                            prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), relatives, plm );
+//
+//                            doNothing();
+//
+//                        } else {
+//
+//                            // It would be quite easy to avoid repeating this last line of code by re-working
+//                            // the if conditions. Let's keep it this way as there are useful breakpoints here
+//                            // if things go sideways.
+//
+//                            prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
+//
+//                            doNothing();
+//
+//                        }
+//
+//                    } else {
+//
+//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
+//
+//                        doNothing();
+//
+//                    }
 
 //		} else {
 //
@@ -1097,10 +1194,10 @@ public class WikiTreeApiUtilities {
 //			    append( repl( INDENT_STRING, indent + 1 ) ).
 //			    append( "*** parameter name is not a string:  " ).
 //			    append( paramName );
+//
+//                }
 
-                }
-
-            }
+//            }
 
             plm.append( repl( INDENT_STRING, indent ) ).append( '}' ).rotate();
 

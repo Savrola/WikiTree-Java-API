@@ -490,23 +490,27 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreePersonProfile getPersonProfile( final long personId )
-            throws IOException, ParseException, WikiTreeRequestFailedException {
-
-        WikiTreeProfile profile = getProfile( personId );
-        if ( profile == null || profile instanceof WikiTreePersonProfile ) {
-
-            return (WikiTreePersonProfile)profile;
-
-        } else {
-
-            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  personId \"" +
-                                                personId +
-                                                "\" refers to a Space, not a Person" );
-
-        }
-
-    }
+//    // Not much point in providing an interface to get a person's profile via their
+//    // page id since I don't know how to get a person's page id.
+//    // Note that a person's page id is NOT the same thing as their Person.Id.
+//
+//    public WikiTreePersonProfile getPersonProfile( final long pageId )
+//            throws IOException, ParseException, WikiTreeRequestFailedException {
+//
+//        WikiTreeProfile profile = getProfile( pageId );
+//        if ( profile == null || profile instanceof WikiTreePersonProfile ) {
+//
+//            return (WikiTreePersonProfile)profile;
+//
+//        } else {
+//
+//            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  pageId \"" +
+//                                                pageId +
+//                                                "\" refers to a Space, not a Person" );
+//
+//        }
+//
+//    }
 
     public WikiTreePersonProfile getPersonProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
@@ -587,6 +591,19 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
+//    public WikiTreeBiography getBio( final long key )
+//            throws IOException, ParseException {
+//
+//        Optional<JSONObject> optResultObject = _jsonClient.getBio( key );
+//
+//        return optResultObject.map( jsonObject -> new WikiTreeBiography( key, jsonObject ) ).orElse( null );
+//
+//        return optResultObject.map(
+//                jsonObject -> new WikiTreeBiography( WikiTreeId.getWikiTreeId( jsonObject ), jsonObject )
+//        ).orElse( null );
+//
+//    }
+
     @SuppressWarnings("unchecked")
     public WikiTreeWatchlist getWatchlist(
             final Boolean getPerson,
@@ -623,6 +640,26 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
         if ( optRequestObject.isPresent() ) {
 
             return new WikiTreeAncestors( key, depth, optRequestObject.get() );
+
+        } else {
+
+            return null;
+
+        }
+    }
+
+    public WikiTreeAncestors getAncestors( final long key, final Integer depth )
+            throws IOException, ParseException, WikiTreeRequestFailedException {
+
+        Optional<JSONObject> optRequestObject = _jsonClient.getAncestors( key, depth );
+
+        if ( optRequestObject.isPresent() ) {
+
+            return new WikiTreeAncestors(
+                    WikiTreeId.getWikiTreeId( optRequestObject.get() ),
+                    depth,
+                    optRequestObject.get()
+            );
 
         } else {
 

@@ -38,6 +38,8 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
 
     private final boolean _requestSiblings;
 
+    private final boolean _allRelativeClassesRequest;
+
     /**
      Create a wrapper for the {@link JSONObject} provided by a call to {@link WikiTreeApiJsonSession#getRelatives(String, boolean, boolean, boolean, boolean)}.
 
@@ -66,6 +68,7 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
         _requestChildren = requestChildren;
         _requestSpouses = requestSpouses;
         _requestSiblings = requestSiblings;
+        _allRelativeClassesRequest = requestParents && requestChildren && requestSpouses && requestSiblings;
 
         JSONArray basePeople = (JSONArray)WikiTreeApiUtilities.getOptionalJsonValue( JSONArray.class, requestObject, "items" );
         if ( basePeople != null ) {
@@ -77,7 +80,7 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
                     JSONObject jsonBasePerson = (JSONObject)basePersonObject;
 
                     // Figure out what this profile's key is?
-                    // Is MUST be a String (anything else means that we have really misunderstood what's going on here).
+                    // It MUST be a String (anything else means that we have really misunderstood what's going on here).
                     // If the String is parseable as an integer then it is a Person.Id.
                     // Otherwise, it can only be a WikiTree ID.
 
@@ -89,7 +92,11 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
                     WikiTreePersonProfile basePersonProfile = new WikiTreePersonProfile(
                             requestType,
                             jsonBasePerson,
-                            WikiTreePersonProfile.ProfileType.RELATIVE,
+                            isAllRelativeClassesRequest()
+                                    ?
+                                    WikiTreePersonProfile.ProfileType.RELATIVES_COMPLETE
+                                    :
+                                    WikiTreePersonProfile.ProfileType.RELATIVES_INCOMPLETE,
                             "person"
                     );
 
@@ -110,6 +117,17 @@ public class WikiTreeRelatives extends WikiTreeWrapper {
             }
 
         }
+
+    }
+
+    /**
+     Determine if this was a request for all relative classes.
+     @return {@code true} if all of the class selection booleans were {@code true}, {@code false} otherwise.
+     */
+
+    public boolean isAllRelativeClassesRequest() {
+
+        return _allRelativeClassesRequest;
 
     }
 

@@ -7,6 +7,7 @@ package com.matilda.wikitree.api.wrappers;
 import com.matilda.wikitree.api.exceptions.ReallyBadNewsError;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONObject;
 
 /**
  Represent a WikiTree ID as a class rather than as a string to make it harder to pass junk as WikiTree ID parameters.
@@ -86,6 +87,30 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
         _isIdName = isName;
 
         _wikiTreeIdString = wikiTreeIdString;
+
+    }
+
+    @NotNull
+    public static WikiTreeId getWikiTreeId( JSONObject jsonObject ) {
+
+        Object wikiTreeIdObj = jsonObject.get( WikiTreePersonProfile.NAME );
+        if ( wikiTreeIdObj instanceof String ) {
+
+            return new WikiTreeId( (String)wikiTreeIdObj );
+
+        } else if ( wikiTreeIdObj == null ) {
+
+//            return new WikiTreeId( "Id=" + getPersonId() );
+            throw new IllegalArgumentException(
+                    "WikiTreePersonProfile:  profile has no WikiTreeID (truly bizarre; please notify danny@matilda.com)"
+            );
+
+        } else {
+
+            throw new ReallyBadNewsError( "WikiTreePersonProfile.getWikiTreeId:  WikiTreeId is not a String; it's a " +
+                                          wikiTreeIdObj.getClass().getCanonicalName() );
+
+        }
 
     }
 

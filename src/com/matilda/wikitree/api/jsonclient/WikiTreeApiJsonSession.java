@@ -636,9 +636,8 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     /**
      Request the biography for a specified person (someone with a WikiTree profile).
 
-     @param key the specified person's WikiTree ID or Person.Id.
-     This parameter will be treated as a Person.Id if it can be successfully parsed by {@link Integer#parseInt(String)}.
-     For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id) to request the biography section of Winston S. Churchill's profile.
+     @param key the specified person's WikiTree ID.
+     For example, specify {@code new WikiTreeId( "Churchill-4" )} to request the biography section of Winston S. Churchill's profile.
      @return A JSONObject containing the specified person's biography.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
      @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
@@ -654,6 +653,33 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         JSONObject requestParams = new JSONObject();
         requestParams.put( "action", "getBio" );
         requestParams.put( "key", key.getValueString() );
+        requestParams.put( "format", "json" );
+
+        Optional<JSONObject> optResultObject = makeRequest( requestParams );
+        return optResultObject;
+
+    }
+
+    /**
+     Request the biography for a specified person (someone with a WikiTree profile).
+
+     @param key the specified person's Person.Id.
+     For example, specify {@code 5589} (Winston S. Churchill's Person.Id) to request the biography section of Winston S. Churchill's profile.
+     @return A JSONObject containing the specified person's biography.
+     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception should be a rather rare occurrence.
+     If you do see one, you have probably encountered a bug in this software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
+     */
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public Optional<JSONObject> getBio( final long key )
+            throws IOException, ParseException {
+
+        JSONObject requestParams = new JSONObject();
+        requestParams.put( "action", "getBio" );
+        requestParams.put( "key", Long.toString( key ) );
         requestParams.put( "format", "json" );
 
         Optional<JSONObject> optResultObject = makeRequest( requestParams );
@@ -777,10 +803,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     /**
      Request the ancestors of a specified person (someone with a WikiTree profile).
 
-     @param key   the specified person's WikiTree ID or Person.Id.
-     This parameter will be treated as a Person.Id if it can be successfully parsed by {@link Integer#parseInt(String)}.
-     For example, specify either {@code "Churchill-4"} (his WikiTree ID) or {@code "5589"} (his Person.Id)
-     to request the biography section of Winston S. Churchill's profile.
+     @param key   the specified person's WikiTree ID.
      @param depth how many generations back to retrieve. if {@code null} then a depth of 5 is used. Valid values are 1-10.
      @return A JSONObject containing the specified person's ancestors.
      @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
@@ -819,6 +842,41 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 //            return optResultObject;
 //
 //        }
+
+    }
+
+    /**
+     Request the ancestors of a specified person (someone with a WikiTree profile).
+
+     @param key   the specified person's Person.Id.
+     @param depth how many generations back to retrieve. if {@code null} then a depth of 5 is used. Valid values are 1-10.
+     @return A JSONObject containing the specified person's ancestors.
+     @throws IOException    if an IOException is thrown by the networking facilities used to send and receive the login request.
+     @throws ParseException if this client is unable to process the response from the WikiTree API server. Seeing this exception
+     should be a rather rare occurrence. If you do see one, you have probably encountered a bug in this
+     software. Please notify danny@matilda.com if you get this exception (be prepared to work with Danny
+     to reproduce the problem).
+     */
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public Optional<JSONObject> getAncestors( final long key, @Nullable final Integer depth )
+            throws IOException, ParseException {
+
+        JSONObject requestParams = new JSONObject();
+        requestParams.put( "action", "getAncestors" );
+        requestParams.put( "key", Long.toString( key ) );
+
+        if ( depth != null ) {
+
+            requestParams.put( "depth", depth.intValue() );
+
+        }
+
+        requestParams.put( "format", "json" );
+
+        Optional<JSONObject> optResultObject = makeRequest( requestParams );
+        return optResultObject;
 
     }
 
@@ -862,6 +920,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         requestParams.put( "format", "json" );
 
         Optional<JSONObject> optResultObject = makeRequest( requestParams );
+
         return optResultObject;
 
 //        if ( optResultObject == null ) {

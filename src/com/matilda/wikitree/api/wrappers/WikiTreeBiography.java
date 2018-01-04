@@ -26,26 +26,7 @@ public class WikiTreeBiography extends WikiTreeWrapper {
 
         super( bioObject );
 
-        if ( key.isIdName() ) {
-
-            setRequestType( WikiTreeRequestType.WIKITREE_ID );
-
-        } else {
-
-            setRequestType( WikiTreeRequestType.PERSON_ID );
-
-        }
-//	try {
-//
-//	    //noinspection ResultOfMethodCallIgnored
-//	    Integer.parseInt( key );
-//	    setRequestType( WikiTreeRequestType.PERSON_ID );
-//
-//	} catch ( NumberFormatException e ) {
-//
-//	    setRequestType( WikiTreeRequestType.WIKITREE_ID );
-//
-//	}
+        setRequestType( WikiTreeRequestType.WIKITREE_ID );
 
     }
 

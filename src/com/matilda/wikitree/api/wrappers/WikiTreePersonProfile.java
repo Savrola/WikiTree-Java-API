@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  A WikiTree person profile.
  */
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "unused" })
 public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public static final String BIRTH_DATE = "BirthDate";
@@ -79,13 +79,40 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         PRIMARY_PERSON,
 
         /**
-         The relative of a {@link #PRIMARY_PERSON} obtained via the request that got the primary person and their relatives.
+         The target person of a {@code getRelatives} request that asked for all of the target person's relatives
+         (all of the relative type selection booleans in the
+         {@link WikiTreeApiWrappersSession#getRelatives(String, boolean, boolean, boolean, boolean)}
+         call were {@code true}.
+         */
+
+        RELATIVES_COMPLETE,
+
+        /**
+         The target person of a {@code getRelatives} request that did not ask for all of the target person's relatives
+         (at least one of the relative type selection booleans in the
+         {@link WikiTreeApiWrappersSession#getRelatives(String, boolean, boolean, boolean, boolean)}
+         call was {@code false}.
+         */
+
+        RELATIVES_INCOMPLETE,
+
+        /**
+         A relative of the target person obtained via a {@code getPerson} or a {@code getRelatives} request.
          */
 
         RELATIVE,
 
+//        /**
+//         The relative of a {@link #PRIMARY_PERSON} obtained via the request that got the primary person and
+//         all of their relatives (all of the relative type selection booleans in the
+//         {@link WikiTreeApiWrappersSession#getRelatives(String, boolean, boolean, boolean, boolean)}
+//         call were {@code true}.
+//         */
+//
+//        COMPLETE_RELATIVES,
+
         /**
-         A person profile returned by a {@code getProfile} or a {@code getPersonProfile} request that asked for all fields ("*").
+         A person profile returned by a {@code getProfile} or a {@code getPersonProfile} request that did not ask for all fields ("*").
          */
 
         PROFILE,
@@ -131,7 +158,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      {@link WikiTreeApiWrappersSession#getProfile(WikiTreeId)} for a person's profile).
      @param jsonObject      the specified JSON object.
      @param profileType     what kind of profile is this
-     ({@link ProfileType#PRIMARY_PERSON}, {@link ProfileType#RELATIVE}, {@link ProfileType#PROFILE}, {@link ProfileType#OTHER}).
+     ({@link ProfileType#PRIMARY_PERSON}, {@link ProfileType#RELATIVES_COMPLETE}, {@link ProfileType#RELATIVES_INCOMPLETE},
+     {@link ProfileType#RELATIVE}, {@link ProfileType#PROFILE}, {@link ProfileType#OTHER}).
      @param profileLocation a varargs series of {@link String} values (or an array of {@link String} values) indicating the path to where
      in {@code jsonObject} we should expect to find the actual person profile. If no vararg values are provided (or {@code profileLocation} is an empty array)
      then {@code jsonObject} is expected to be the person profile object.
@@ -205,7 +233,14 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         }
 
-        ProfileType relativeProfileType = profileType == ProfileType.PRIMARY_PERSON ? ProfileType.RELATIVE : ProfileType.OTHER;
+        // Figure out the type of the relative profiles (I'm not sure that this is ever anything but ProfileType.RELATIVE).
+
+        ProfileType relativeProfileType =
+                ( profileType == ProfileType.PRIMARY_PERSON || profileType == ProfileType.RELATIVES_COMPLETE || profileType == ProfileType.RELATIVES_INCOMPLETE )
+                        ?
+                        ProfileType.RELATIVE
+                        :
+                        ProfileType.OTHER;
         _parents.addAll( getPeople( this, relativeProfileType, PARENTS ) );
         _children.addAll( getPeople( this, relativeProfileType, CHILDREN ) );
         _spouses.addAll( getPeople( this, relativeProfileType, SPOUSES ) );
@@ -291,86 +326,137 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     /**
-     Get this person's parents.
+     Get this person's parents if they are available.
 
-     @return an unmodifiable collection containing this person's parents (to the extent that they are known).
+     @return if this is a {@link #isFullProfile()} then an {@link Optional} enclosing an unmodifiable collection containing
+     this person's parents (to the extent that they are known).
+     Otherwise, an {@link Optional#empty()}.
      */
 
-    public Collection<WikiTreePersonProfile> getParents() {
+    public Optional<Collection<WikiTreePersonProfile>> getParents() {
 
         if ( isFullProfile() ) {
 
-            return Collections.unmodifiableCollection( _parents );
+            return Optional.of( Collections.unmodifiableCollection( _parents ) );
 
         } else {
 
-            throw new IllegalArgumentException(
-                    "WikiTreePersonProfile.getParents():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            return Optional.empty();
 
         }
 
+    }
+
+    public int getParentCount() {
+
+        return _parents.size();
+
+    }
+
+    public boolean containsSomeParents() {
+
+        return !_parents.isEmpty();
     }
 
     /**
      Get this person's spouses.
 
-     @return an unmodifiable collection containing this person's spouses (to the extent that they are known).
+     @return if this is a {@link #isFullProfile()} then an {@link Optional} enclosing an unmodifiable collection containing
+     this person's spouses (to the extent that they are known).
+     Otherwise, an {@link Optional#empty()}.
      */
 
-    public Collection<WikiTreePersonProfile> getSpouses() {
+    public Optional<Collection<WikiTreePersonProfile>> getSpouses() {
 
         if ( isFullProfile() ) {
 
-            return Collections.unmodifiableCollection( _spouses );
+            return Optional.of( Collections.unmodifiableCollection( _spouses ) );
 
         } else {
 
-            throw new IllegalArgumentException(
-                    "WikiTreePersonProfile.getSpouses():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            return Optional.empty();
 
         }
 
+    }
+
+    public int getSpouseCount() {
+
+        return _spouses.size();
+
+    }
+
+    public boolean containsSomeSpouses() {
+
+        return !_spouses.isEmpty();
     }
 
     /**
      Get this person's children.
 
-     @return an unmodifiable collection containing this person's children (to the extent that they are known).
+     @return if this is a {@link #isFullProfile()} then an {@link Optional} enclosing an unmodifiable collection containing
+     this person's children (to the extent that they are known).
+     Otherwise, an {@link Optional#empty()}.
      */
 
-    public Collection<WikiTreePersonProfile> getChildren() {
+    public Optional<Collection<WikiTreePersonProfile>> getChildren() {
 
         if ( isFullProfile() ) {
 
-            return Collections.unmodifiableCollection( _children );
+            return Optional.of( Collections.unmodifiableCollection( _children ) );
 
         } else {
 
-            throw new IllegalArgumentException(
-                    "WikiTreePersonProfile.getChildren():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            return Optional.empty();
 
         }
 
+
+    }
+
+    public int getChildCount() {
+
+        return _children.size();
+
+    }
+
+    public boolean containsSomeChildren() {
+
+        return !_children.isEmpty();
     }
 
     /**
      Get this person's siblings.
 
-     @return an unmodifiable collection containing this person's siblings (to the extent that they are known).
+     @return if this is a {@link #isFullProfile()} then an {@link Optional} enclosing an unmodifiable collection containing
+     this person's siblings (to the extent that they are known).
+     Otherwise, an {@link Optional#empty()}.
      */
 
-    public Collection<WikiTreePersonProfile> getSiblings() {
+    public Optional<Collection<WikiTreePersonProfile>> getSiblings() {
 
         if ( isFullProfile() ) {
 
-            return Collections.unmodifiableCollection( _siblings );
+            return Optional.of( Collections.unmodifiableCollection( _siblings ) );
 
         } else {
 
-            throw new IllegalArgumentException(
-                    "WikiTreePersonProfile.getSiblings():  this method requires a WTPP instance which is a full profile (see WTPP.isFullProfile() for more info)" );
+            return Optional.empty();
 
         }
+
+
+    }
+
+    public int getSiblingCount() {
+
+        return _siblings.size();
+
+    }
+
+    public boolean containsSomeSiblings() {
+
+        return !_siblings.isEmpty();
 
     }
 
@@ -384,7 +470,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      Determine if this is this a full (i.e. primary) profile.
 
      @return {@code true} if this profile was obtained
-     via a call to {@link WikiTreeApiWrappersSession#getPerson(String, String)} with {@code "*"} as the second parameter.
+     via a call to {@link WikiTreeApiWrappersSession#getPerson(String, String)} with {@code "*"} as the second parameter
+     or is the target profile of a {@link WikiTreeApiWrappersSession#getRelatives(String, boolean, boolean, boolean, boolean)} request.
      Note that
      {@link WikiTreeApiWrappersSession#getPerson(WikiTreeId)} and {@link WikiTreeApiWrappersSession#getPerson(long)} return full / primary
      profiles as they are are really just wrappers which call
@@ -393,6 +480,20 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
      */
 
     public boolean isFullProfile() {
+
+        return _profileType == ProfileType.PRIMARY_PERSON ||
+               _profileType == ProfileType.RELATIVES_COMPLETE ||
+               _profileType == ProfileType.RELATIVES_INCOMPLETE;
+
+    }
+
+    /**
+     Determine if this is this a relative profile (a child, parent, sibling or spouse of a primary profile or a profile obtained
+     via {@code getRelatives}.
+     @return {@code true} if this profile's profile type is {@link ProfileType#RELATIVE}; {@code false} otherwise.
+     */
+
+    public boolean isRelativeProfile() {
 
         return _profileType == ProfileType.PRIMARY_PERSON;
 
@@ -607,21 +708,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public WikiTreeId getWikiTreeId() {
 
-        Object wikiTreeIdObj = get( NAME );
-        if ( wikiTreeIdObj == null ) {
-
-            return new WikiTreeId( "Id=" + getPersonId() );
-
-        } else if ( wikiTreeIdObj instanceof String ) {
-
-            return new WikiTreeId( (String)wikiTreeIdObj );
-
-        } else {
-
-            throw new ReallyBadNewsError( "WikiTreePersonProfile.getWikiTreeId:  WikiTreeId is neither null or a String; it's a " +
-                                          wikiTreeIdObj.getClass().getCanonicalName() );
-
-        }
+        return WikiTreeId.getWikiTreeId( this );
 
     }
 
@@ -683,7 +770,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
         @SuppressWarnings("UnnecessaryLocalVariable")
         String nameObj = getValue(
                 LONG_NAME,
-                () -> getShortName()
+                this::getShortName
         );
 
         return nameObj;
