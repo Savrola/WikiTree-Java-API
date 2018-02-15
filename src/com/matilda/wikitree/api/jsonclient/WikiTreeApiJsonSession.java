@@ -198,7 +198,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean login( @NotNull final String emailAddress, @NotNull final String password )
+    public boolean login( final @NotNull String emailAddress, final @NotNull String password )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();
@@ -265,7 +265,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @return {@code true} if the login worked; {@code false} otherwise.
      */
 
-    private boolean analyzeLoginResult( @NotNull final String emailAddress, @Nullable final JSONObject resultObject ) {
+    private boolean analyzeLoginResult( final @NotNull String emailAddress, @Nullable final JSONObject resultObject ) {
 
         // Start off by assuming that the login attempt failed.
 
@@ -421,7 +421,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
 
     @NotNull
-    public Optional<JSONObject> getPerson( @NotNull final WikiTreeId key )
+    public Optional<JSONObject> getPerson( final @NotNull WikiTreeId key )
             throws IOException, ParseException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -471,7 +471,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getPerson( @NotNull final WikiTreeId key, final String fields )
+    public Optional<JSONObject> getPerson( final @NotNull WikiTreeId key, final String fields )
             throws IOException, ParseException {
 
         return getPerson( key.getValueString(), fields );
@@ -547,7 +547,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     }
 
-    public static Object interpretIdParameter( final String who, @NotNull final String key ) {
+    public static Object interpretIdParameter( final String who, final @NotNull String key ) {
 
         if ( key.length() == 0 ) {
 
@@ -815,7 +815,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Optional<JSONObject> getAncestors( @NotNull final WikiTreeId key, @Nullable final Integer depth )
+    public Optional<JSONObject> getAncestors( final @NotNull WikiTreeId key, @Nullable final Integer depth )
             throws IOException, ParseException {
 
         JSONObject requestParams = new JSONObject();

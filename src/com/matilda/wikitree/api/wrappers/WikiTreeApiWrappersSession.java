@@ -159,7 +159,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      @param wikiTreeApiJsonSession the {@code WikiTreeApiJsonSession} which this instance is to wrap.
      */
 
-    public WikiTreeApiWrappersSession( @NotNull final WikiTreeApiJsonSession wikiTreeApiJsonSession ) {
+    public WikiTreeApiWrappersSession( final @NotNull WikiTreeApiJsonSession wikiTreeApiJsonSession ) {
 
         super();
 
@@ -211,7 +211,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      @throws ParseException if this client is unable to process the response from the WikiTree API server (definitely see {@link WikiTreeApiJsonSession#login(String, String)} for more information).
      */
 
-    public boolean login( @NotNull final String emailAddress, @NotNull final String password )
+    public boolean login( final @NotNull String emailAddress, final @NotNull String password )
             throws IOException, ParseException {
 
         if ( _jsonClient.login( emailAddress, password ) ) {
@@ -280,7 +280,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      depending on whether the request specified a WikiTree ID or a numeric Person.Id respectively.
      */
 
-    public WikiTreePersonProfile getPerson( @NotNull final WikiTreeId key )
+    public WikiTreePersonProfile getPerson( final @NotNull WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
@@ -320,7 +320,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 //
 //	}
 
-    public WikiTreePersonProfile getPerson( @NotNull final long personId, final String fields )
+    public WikiTreePersonProfile getPerson( final @NotNull long personId, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         WikiTreePersonProfile rval = getPerson( "" + personId, fields );
@@ -329,7 +329,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public WikiTreePersonProfile getPerson( @NotNull final WikiTreeId key, final String fields )
+    public WikiTreePersonProfile getPerson( final @NotNull WikiTreeId key, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         WikiTreePersonProfile rval = getPerson( key.getValueString(), fields );
@@ -389,7 +389,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
      to reproduce the problem).
      */
 
-    public WikiTreePersonProfile getPerson( @NotNull final String key, final String fields )
+    public WikiTreePersonProfile getPerson( final @NotNull String key, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
         // We need the request to include the "Name" field.

@@ -16,13 +16,13 @@ public class WikiTreeWrapper extends JSONObject {
 
     private WikiTreeRequestType _requestType = WikiTreeRequestType.UNSPECIFIED;
 
-    protected WikiTreeWrapper( @NotNull final JSONObject jsonObject ) {
+    protected WikiTreeWrapper( final @NotNull JSONObject jsonObject ) {
 
         super( jsonObject );
 
     }
 
-    protected void setRequestType( @NotNull final WikiTreeRequestType requestType ) {
+    protected void setRequestType( final @NotNull WikiTreeRequestType requestType ) {
 
         if ( requestType == WikiTreeRequestType.UNSPECIFIED ) {
 

@@ -15,7 +15,7 @@ public class WikiTreeRequestFailedException extends Exception {
 
     private final JSONObject _resultObject;
 
-    public WikiTreeRequestFailedException( final String why, @NotNull final JSONObject resultObject ) {
+    public WikiTreeRequestFailedException( final String why, final @NotNull JSONObject resultObject ) {
 
         super( why );
 
@@ -23,7 +23,7 @@ public class WikiTreeRequestFailedException extends Exception {
 
     }
 
-    public WikiTreeRequestFailedException( final String why, @NotNull final JSONObject resultObject, final Throwable e ) {
+    public WikiTreeRequestFailedException( final String why, final @NotNull JSONObject resultObject, final Throwable e ) {
 
         super( why, e );
 

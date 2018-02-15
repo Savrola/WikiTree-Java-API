@@ -64,9 +64,9 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
      */
 
     public WikiTreeAncestors(
-            @NotNull final WikiTreeId key,
+            final @NotNull WikiTreeId key,
             @Nullable final Integer depth,
-            @NotNull final JSONObject resultObject
+            final @NotNull JSONObject resultObject
     )
             throws WikiTreeRequestFailedException {
 

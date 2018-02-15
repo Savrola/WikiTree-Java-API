@@ -51,7 +51,7 @@ public class WikiTreeWatchlist extends WikiTreeWrapper {
             final Integer limitParam,
             final Integer offsetParam,
             final String orderParam,
-            @NotNull final JSONObject resultObject
+            final @NotNull JSONObject resultObject
     ) throws WikiTreeRequestFailedException {
 
         super( resultObject );

@@ -22,7 +22,7 @@ public class WikiTreeBiography extends WikiTreeWrapper {
      Assumed to be in the form returned by {@link WikiTreeApiJsonSession#getBio(WikiTreeId)}.
      */
 
-    public WikiTreeBiography( final WikiTreeId key, @NotNull final JSONObject bioObject ) {
+    public WikiTreeBiography( final WikiTreeId key, final @NotNull JSONObject bioObject ) {
 
         super( bioObject );
 

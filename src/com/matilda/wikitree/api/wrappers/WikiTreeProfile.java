@@ -24,7 +24,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
     private final JSONObject _originalJSONObject;
 
-    protected WikiTreeProfile( @NotNull final JSONObject jsonObject, final String[] profileLocation ) throws WikiTreeRequestFailedException {
+    protected WikiTreeProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation ) throws WikiTreeRequestFailedException {
 //        super( jsonObject );
         super( findProfile( jsonObject, profileLocation )
 
@@ -34,7 +34,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
 
     }
 
-    private static JSONObject findProfile( @NotNull final JSONObject jsonObject, final String[] profileLocation )
+    private static JSONObject findProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation )
             throws WikiTreeRequestFailedException {
 
 
@@ -194,6 +194,12 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
             throw new NumberFormatException( "profile's \"Manager\" field is neither a String or a Number - " + this );
 
         }
+
+    }
+
+    public String toString() {
+
+        return "WikiTreeProfile( " + super.toString() + " )";
 
     }
 

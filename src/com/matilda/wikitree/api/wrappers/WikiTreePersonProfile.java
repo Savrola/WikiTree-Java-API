@@ -175,8 +175,8 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public WikiTreePersonProfile(
             @Nullable final WikiTreeRequestType requestType,
-            @NotNull final JSONObject jsonObject,
-            @NotNull final ProfileType profileType,
+            final @NotNull JSONObject jsonObject,
+            final @NotNull ProfileType profileType,
             final String... profileLocation
     ) throws WikiTreeRequestFailedException {
 
@@ -713,7 +713,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     @NotNull
-    public Optional<Object> getOptionalValue( @NotNull final String jsonKey ) {
+    public Optional<Object> getOptionalValue( final @NotNull String jsonKey ) {
 
         Object obj = get( jsonKey );
 
@@ -722,7 +722,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     @NotNull
-    public Object getMandatoryValue( @NotNull final String jsonKey ) {
+    public Object getMandatoryValue( final @NotNull String jsonKey ) {
 
         @SuppressWarnings("UnnecessaryLocalVariable") Object obj = get( jsonKey );
 
@@ -731,7 +731,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     }
 
     @NotNull
-    public <T> T getValue( @NotNull final String jsonKey, @NotNull final Supplier<T> alternative ) {
+    public <T> T getValue( final @NotNull String jsonKey, final @NotNull Supplier<T> alternative ) {
 
         Optional<Object> optRval = getOptionalValue( jsonKey );
 

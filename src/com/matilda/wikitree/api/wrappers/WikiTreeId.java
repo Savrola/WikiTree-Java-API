@@ -51,7 +51,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
 //    private final Kind _kind;
 
-    public WikiTreeId( @NotNull final String wikiTreeIdString )
+    public WikiTreeId( final @NotNull String wikiTreeIdString )
             throws IllegalArgumentException, ReallyBadNewsError {
 
         super();
@@ -199,7 +199,7 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
     }
 
     @Override
-    public int compareTo( @NotNull final WikiTreeId o ) {
+    public int compareTo( final @NotNull WikiTreeId o ) {
 
         return getValueString().compareTo( o.getValueString() );
 

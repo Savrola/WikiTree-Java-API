@@ -149,7 +149,7 @@ public class WikiTreeApiUtilities {
 
     @NotNull
     public static Optional<String> formatDate(
-            @SuppressWarnings("OptionalUsedAsFieldOrParameterType") @NotNull final Optional<String> optDateString,
+            @SuppressWarnings("OptionalUsedAsFieldOrParameterType") final @NotNull Optional<String> optDateString,
             final boolean longMonthName,
             final boolean handleInOn
     ) {
@@ -192,7 +192,7 @@ public class WikiTreeApiUtilities {
 
     @NotNull
     public static String formatDate(
-            @NotNull final String dateString,
+            final @NotNull String dateString,
             final boolean longMonthName,
             final boolean handleInOn
     ) throws IllegalArgumentException {
@@ -332,7 +332,7 @@ public class WikiTreeApiUtilities {
      */
 
 
-    public static String formatDate( @NotNull final String dateString ) {
+    public static String formatDate( final @NotNull String dateString ) {
 
         return formatDate( dateString, false, true );
 
@@ -497,7 +497,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static SortedSet<String> constructExcludedGetPersonFieldsSet( @NotNull final SortedSet<String> excludedFields ) {
+    public static SortedSet<String> constructExcludedGetPersonFieldsSet( final @NotNull SortedSet<String> excludedFields ) {
 
         SortedSet<String> includedFields = new TreeSet<>( S_ALL_GET_PERSON_FIELDS_SET );
         includedFields.removeAll( excludedFields );
@@ -506,7 +506,7 @@ public class WikiTreeApiUtilities {
 
     }
 
-    public static String constructGetPersonFieldsString( @NotNull final SortedSet<String> includedFields ) {
+    public static String constructGetPersonFieldsString( final @NotNull SortedSet<String> includedFields ) {
 
         return constructGetPersonFieldsString( includedFields.toArray( new String[includedFields.size()] ) );
 
@@ -538,7 +538,7 @@ public class WikiTreeApiUtilities {
      @return {@code true} if the string satisfies the above definition of a valid WikiTree ID Name; {@code false} otherwise.
      */
 
-    public static boolean isValidWikiTreeIdPersonName( @NotNull final String wikiTreeIdName ) {
+    public static boolean isValidWikiTreeIdPersonName( final @NotNull String wikiTreeIdName ) {
 
         if ( isValidWikiTreeSpaceName( wikiTreeIdName ) ) {
 
@@ -562,7 +562,7 @@ public class WikiTreeApiUtilities {
      @return {@code true} if the string starts with {@code "Space:"} and contains at least one additional character; {@code false} otherwise.
      */
 
-    public static boolean isValidWikiTreeSpaceName( @NotNull final String spaceWikiTreeId ) {
+    public static boolean isValidWikiTreeSpaceName( final @NotNull String spaceWikiTreeId ) {
 
         Matcher mSpaceName = SPACE_NAME_PATTERN.matcher( spaceWikiTreeId );
         return mSpaceName.matches();
@@ -586,7 +586,7 @@ public class WikiTreeApiUtilities {
          @param ps where the pretty-fied output should go.
          */
 
-        public PrettyLineManager( @NotNull final Writer ps ) {
+        public PrettyLineManager( final @NotNull Writer ps ) {
 
             super();
 
@@ -619,7 +619,7 @@ public class WikiTreeApiUtilities {
          @return this instance (allows chained calls to methods in this class).
          */
 
-        public PrettyLineManager append( @NotNull final Object value ) {
+        public PrettyLineManager append( final @NotNull Object value ) {
 
             if ( _currentOutputLine == null ) {
 
@@ -1526,7 +1526,7 @@ public class WikiTreeApiUtilities {
      */
 
     @NotNull
-    public static Object getMandatoryJsonValue( @Nullable final Class requiredClass, @NotNull final JSONObject jsonObject, final String... keys ) {
+    public static Object getMandatoryJsonValue( @Nullable final Class requiredClass, final @NotNull JSONObject jsonObject, final String... keys ) {
 
         Object rval = getJsonValue( true, jsonObject, keys );
         if ( rval == null ) {
