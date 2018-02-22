@@ -549,7 +549,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
     public static Object interpretIdParameter( final String who, final @NotNull String key ) {
 
-        if ( key.length() == 0 ) {
+        if ( key.isEmpty() ) {
 
             throw new IllegalArgumentException( who + ":  key must not be an empty string" );
 
