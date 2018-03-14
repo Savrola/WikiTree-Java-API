@@ -250,7 +250,6 @@ public class WikiTreeApiUtilities {
 
         }
 
-//        int year = Integer.parseInt( yearString );
         int month = monthString == null ? 0 : Integer.parseInt( monthString );
         int dayOfMonth = dayOfMonthString == null ? 0 : Integer.parseInt( dayOfMonthString );
 
@@ -303,12 +302,6 @@ public class WikiTreeApiUtilities {
             }
 
         }
-
-//        } else {
-//
-//            throw new IllegalArgumentException( "invalid date \"" + dateString + "\" (must be YYYY-MM-DD)" );
-//
-//        }
 
     }
 
@@ -372,7 +365,6 @@ public class WikiTreeApiUtilities {
             readFromConnection( false, sb, reader );
 
             String responseString = sb.toString();
-//	    System.out.println( "got response:  " + sb );
 
             if ( responseString.isEmpty() ) {
 
@@ -386,7 +378,6 @@ public class WikiTreeApiUtilities {
 
                     if ( arrayResponse.size() == 1 ) {
 
-//			System.out.println( "one entity in response" );
                         Object singleResult = arrayResponse.get( 0 );
                         if ( singleResult == null ) {
 
@@ -1112,93 +1103,6 @@ public class WikiTreeApiUtilities {
 
             }
 
-//                    else {
-//
-//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
-//
-//                        doNothing();
-//
-//                    }
-
-//                        } else {
-//
-//                            Optional<Collection<WikiTreePersonProfile>> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
-//
-//                            if ( relatives.isPresent() ) {
-//
-//                                prettyFormatJsonThing(
-//                                        indent + 1,
-//                                        String.valueOf( paramName ),
-//                                        relatives,
-//                                        plm
-//                                );
-//
-//                            } else {
-//
-//                                prettyFormatJsonThing(
-//                                        indent + 1,
-//                                        String.valueOf( paramName ),
-//                                        paramValue,
-//                                        plm
-//                                );
-//
-//                            }
-//
-//                        }
-//
-//                    } else {
-//
-//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
-//
-//                        doNothing();
-//
-//                    }
-//
-//                    if (
-//                            iThing instanceof WikiTreePersonProfile &&
-//                            RELATIVE_GETTERS.containsKey( paramName )
-//                    ) {
-//
-////                        System.out.println( "dealing with " + ( (String)paramName ).toLowerCase() );
-//                        if ( ((WikiTreePersonProfile)iThing).isFullProfile() ) {
-//
-//                            GetRelatives getter = RELATIVE_GETTERS.get( paramName );
-//                            Optional<Collection<WikiTreePersonProfile>> relatives = getter.getRelatives( (String)paramName, (WikiTreePersonProfile)iThing );
-//                            prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), relatives, plm );
-//
-//                            doNothing();
-//
-//                        } else {
-//
-//                            // It would be quite easy to avoid repeating this last line of code by re-working
-//                            // the if conditions. Let's keep it this way as there are useful breakpoints here
-//                            // if things go sideways.
-//
-//                            prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
-//
-//                            doNothing();
-//
-//                        }
-//
-//                    } else {
-//
-//                        prettyFormatJsonThing( indent + 1, String.valueOf( paramName ), paramValue, plm );
-//
-//                        doNothing();
-//
-//                    }
-
-//		} else {
-//
-//		    plm.
-//			    append( repl( INDENT_STRING, indent + 1 ) ).
-//			    append( "*** parameter name is not a string:  " ).
-//			    append( paramName );
-//
-//                }
-
-//            }
-
             plm.append( repl( INDENT_STRING, indent ) ).append( '}' ).rotate();
 
         } else if ( iThing instanceof Collection ) {
@@ -1294,8 +1198,6 @@ public class WikiTreeApiUtilities {
         Object parsedObject = jp.parse( jsonArrayString.trim() );
         final JSONArray parsedArray = (JSONArray)parsedObject;
 
-//	System.out.println( "parse of array worked:  " + parsedArray );
-
         return parsedArray;
 
     }
@@ -1316,8 +1218,6 @@ public class WikiTreeApiUtilities {
 
         Object parsedObject = jp.parse( jsonObjectString );
         final JSONObject jsonObject = (JSONObject)parsedObject;
-
-//	System.out.println( "parse of object worked:  " + jsonObject );
 
         return jsonObject;
 
@@ -1406,14 +1306,6 @@ public class WikiTreeApiUtilities {
                             "unable to create authenticated session for \"" + userName + "\"",
                             WikiTreeLoginRequestFailedException.Reason.AUTHENTICATION_FAILED
                     );
-//                                        "\" (probably incorrect user name or incorrect password; could be network problems or maybe even an invasion of space aliens)" );
-//                    System.err.flush();
-//                    System.out.println( "first line of " + userInfoFileName + " must contain the email address that you use to login to WikiTree" );
-//                    System.out.println( "second line of " + userInfoFileName + " must contain the WikiTree password for that email address" );
-//                    System.out.println( "leading or trailing whitespace on the email line is ignored" );
-//                    System.out.println( "IMPORTANT:  leading or trailing whitespace on the password line is NOT ignored" );
-//                    System.out.flush();
-//                    System.exit( 1 );
 
                 }
 

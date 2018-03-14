@@ -174,8 +174,6 @@ public class WikiTreeAncestors extends WikiTreeWrapper {
 
         _ancestralTree = buildAncestralTree( _basePersonProfile, lineage );
 
-//	printAncestralTree( System.out );
-
     }
 
     private void rememberParent(

@@ -49,8 +49,6 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
     private final String _wikiTreeIdString;
     private final boolean _isIdName;
 
-//    private final Kind _kind;
-
     public WikiTreeId( final @NotNull String wikiTreeIdString )
             throws IllegalArgumentException, ReallyBadNewsError {
 
@@ -100,7 +98,6 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
         } else if ( wikiTreeIdObj == null ) {
 
-//            return new WikiTreeId( "Id=" + getPersonId() );
             throw new IllegalArgumentException(
                     "WikiTreePersonProfile:  profile has no WikiTreeID (truly bizarre; please notify danny@matilda.com)"
             );

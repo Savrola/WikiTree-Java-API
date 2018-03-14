@@ -102,15 +102,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         RELATIVE,
 
-//        /**
-//         The relative of a {@link #PRIMARY_PERSON} obtained via the request that got the primary person and
-//         all of their relatives (all of the relative type selection booleans in the
-//         {@link WikiTreeApiWrappersSession#getRelatives(String, boolean, boolean, boolean, boolean)}
-//         call were {@code true}.
-//         */
-//
-//        COMPLETE_RELATIVES,
-
         /**
          A person profile returned by a {@code getProfile} or a {@code getPersonProfile} request that did not ask for all fields ("*").
          */
@@ -926,10 +917,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         @SuppressWarnings("UnnecessaryLocalVariable")
         String lastNameAtBirth = (String)getMandatoryValue( LAST_NAME_AT_BIRTH );
-//                getValue(
-//                LAST_NAME_AT_BIRTH,
-//                this::getShortName
-//        );
 
         return lastNameAtBirth;
 

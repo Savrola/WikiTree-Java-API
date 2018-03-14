@@ -31,10 +31,6 @@ public class WikiTreeSpaceProfile extends WikiTreeProfile {
 
             setRequestType( WikiTreeRequestType.SPACE_NAME );
 
-//	} else if ( containsKey( "user_id" ) ) {
-//
-//	    setRequestType( WikiTreeRequestType.PERSON_ID );
-
         } else {
 
             setRequestType( WikiTreeRequestType.UNKNOWN );

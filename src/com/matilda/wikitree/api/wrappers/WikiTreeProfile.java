@@ -25,7 +25,6 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
     private final JSONObject _originalJSONObject;
 
     protected WikiTreeProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation ) throws WikiTreeRequestFailedException {
-//        super( jsonObject );
         super( findProfile( jsonObject, profileLocation )
 
         );
@@ -90,16 +89,12 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
     @Nullable
     public static WikiTreeProfile distinguish( final JSONObject jsonObject ) throws WikiTreeRequestFailedException {
 
-//        WikiTreeApiUtilities.prettyPrintJsonThing( "distinguishing ", jsonObject );
-
         WikiTreeProfile rval;
         Object responseObj = jsonObject.get( "profile" );
         if ( responseObj instanceof JSONObject ) {
 
             JSONObject response = (JSONObject)responseObj;
             JSONObject profile = response;
-
-//	    WikiTreeApiUtilities.prettyPrintJsonThing( "profile", profile );
 
             Object isPersonObj = profile.get( "IsPerson" );
             if ( isPersonObj instanceof Number ? ( (Number)isPersonObj ).longValue() == 1L : "1".equals( isPersonObj ) ) {

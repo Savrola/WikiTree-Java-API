@@ -288,16 +288,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
         return rval;
 
-//	if ( rval == null ) {
-//
-//	    return null;
-//
-//	} else {
-//
-//	    return new WikiTreePersonFamilyGroup( rval );
-//
-//	}
-
     }
 
     public WikiTreePersonProfile getPerson( final long personId )
@@ -309,16 +299,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
         return rval;
 
     }
-
-//	if ( rval == null ) {
-//
-//	    return null;
-//
-//	} else {
-//
-//	    return new WikiTreePersonFamilyGroup( rval );
-//
-//	}
 
     public WikiTreePersonProfile getPerson( final @NotNull long personId, final String fields )
             throws IOException, ParseException, WikiTreeRequestFailedException {
@@ -434,20 +414,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-//    /**
-//     An array of the fields returned by the WikiTree API's {@code getPerson} request according to
-//     <a href="https://www.wikitree.com/wiki/Help:API_Documentation#getPerson">https://www.wikitree.com/wiki/Help:API_Documentation#getPerson</a> on 2017/06/14.
-//     */
-//
-//    private static final String[] s_allGetPersonFieldsArray = {
-//	    "Id", "Name", "FirstName", "MiddleName", "LastNameAtBirth", "LastNameCurrent", "Nicknames", "LastNameOther", "RealName", "Prefix", "Suffix",
-//	    "Gender", "BirthDate", "DeathDate", "BirthLocation", "DeathLocation", "BirthDateDecade", "DeathDateDecade", "Photo", "IsLiving", "Privacy",
-//	    "Mother", "Father", "Parents", "Children", "Siblings", "Spouses",
-//	    "Derived.ShortName", "Derived.BirthNamePrivate", "Derived.LongNamePrivate",
-//	    "Manager"
-//    };
-//
-
     public WikiTreeProfile getProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
@@ -490,27 +456,27 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-//    // Not much point in providing an interface to get a person's profile via their
-//    // page id since I don't know how to get a person's page id.
-//    // Note that a person's page id is NOT the same thing as their Person.Id.
-//
-//    public WikiTreePersonProfile getPersonProfile( final long pageId )
-//            throws IOException, ParseException, WikiTreeRequestFailedException {
-//
-//        WikiTreeProfile profile = getProfile( pageId );
-//        if ( profile == null || profile instanceof WikiTreePersonProfile ) {
-//
-//            return (WikiTreePersonProfile)profile;
-//
-//        } else {
-//
-//            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  pageId \"" +
-//                                                pageId +
-//                                                "\" refers to a Space, not a Person" );
-//
-//        }
-//
-//    }
+    //    // Not much point in providing an interface to get a person's profile via their
+    //    // page id since I don't know how to get a person's page id.
+    //    // Note that a person's page id is NOT the same thing as their Person.Id.
+    //
+    //    public WikiTreePersonProfile getPersonProfile( final long pageId )
+    //            throws IOException, ParseException, WikiTreeRequestFailedException {
+    //
+    //        WikiTreeProfile profile = getProfile( pageId );
+    //        if ( profile == null || profile instanceof WikiTreePersonProfile ) {
+    //
+    //            return (WikiTreePersonProfile)profile;
+    //
+    //        } else {
+    //
+    //            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  pageId \"" +
+    //                                                pageId +
+    //                                                "\" refers to a Space, not a Person" );
+    //
+    //        }
+    //
+    //    }
 
     public WikiTreePersonProfile getPersonProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
@@ -591,19 +557,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-//    public WikiTreeBiography getBio( final long key )
-//            throws IOException, ParseException {
-//
-//        Optional<JSONObject> optResultObject = _jsonClient.getBio( key );
-//
-//        return optResultObject.map( jsonObject -> new WikiTreeBiography( key, jsonObject ) ).orElse( null );
-//
-//        return optResultObject.map(
-//                jsonObject -> new WikiTreeBiography( WikiTreeId.getWikiTreeId( jsonObject ), jsonObject )
-//        ).orElse( null );
-//
-//    }
-
     @SuppressWarnings("unchecked")
     public WikiTreeWatchlist getWatchlist(
             final Boolean getPerson,
@@ -683,7 +636,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
             @SuppressWarnings("UnnecessaryLocalVariable")
             WikiTreeRelatives rval = new WikiTreeRelatives( keys, getParents, getChildren, getSpouses, getSiblings, optRequestObject.get() );
-//	    System.out.println( "relatives are " + rval );
 
             return rval;
 

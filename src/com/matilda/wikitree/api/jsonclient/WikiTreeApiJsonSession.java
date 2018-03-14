@@ -475,23 +475,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
             throws IOException, ParseException {
 
         return getPerson( key.getValueString(), fields );
-//        JSONObject requestParams = new JSONObject();
-//        requestParams.put( "action", "getPerson" );
-//        requestParams.put( "key", key.getValueString() ); // interpretIdParameter( "getPerson", key ) );
-//        requestParams.put( "fields", fields );
-//        requestParams.put( "format", "json" );
-//
-//        JSONObject resultObject = makeRequest( requestParams );
-//
-//        if ( resultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return resultObject;
-//
-//        }
 
     }
 
@@ -500,23 +483,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
             throws IOException, ParseException {
 
         return getPerson( "" + personId, fields );
-//        JSONObject requestParams = new JSONObject();
-//        requestParams.put( "action", "getPerson" );
-//        requestParams.put( "key", personId ); // interpretIdParameter( "getPerson", key ) );
-//        requestParams.put( "fields", fields );
-//        requestParams.put( "format", "json" );
-//
-//        JSONObject resultObject = makeRequest( requestParams );
-//
-//        if ( resultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return resultObject;
-//
-//        }
 
     }
 
@@ -534,16 +500,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         Optional<JSONObject> optResultObject = makeRequest( requestParams );
 
         return optResultObject;
-//        return optResultObject == null ? Optional.empty() : Optional.of( optResultObject );
-//        if ( optResultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return optResultObject;
-//
-//        }
 
     }
 
@@ -788,16 +744,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         Optional<JSONObject> optResultObject = makeRequest( requestParams );
         return optResultObject;
 
-//        if ( optResultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return optResultObject;
-//
-//        }
-
     }
 
     /**
@@ -830,18 +776,8 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
 
         requestParams.put( "format", "json" );
 
-        Optional<JSONObject> optResultObject = makeRequest( requestParams );
+        @SuppressWarnings("UnnecessaryLocalVariable") Optional<JSONObject> optResultObject = makeRequest( requestParams );
         return optResultObject;
-
-//        if ( optResultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return optResultObject;
-//
-//        }
 
     }
 
@@ -919,19 +855,9 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         requestParams.put( "getSiblings", getSiblings ? 1 : 0 );
         requestParams.put( "format", "json" );
 
-        Optional<JSONObject> optResultObject = makeRequest( requestParams );
+        @SuppressWarnings("UnnecessaryLocalVariable") Optional<JSONObject> optResultObject = makeRequest( requestParams );
 
         return optResultObject;
-
-//        if ( optResultObject == null ) {
-//
-//            return null;    // No such fish.
-//
-//        } else {
-//
-//            return optResultObject;
-//
-//        }
 
     }
 
@@ -939,17 +865,14 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
     private Optional<JSONObject> makeRequest( final JSONObject requestObject )
             throws IOException, ParseException {
 
-//	System.out.println( "... starting @ " + WikiTreeApiUtilities.formatStandardMs( new Date() ) );
         long startTime = System.currentTimeMillis();
         Optional<JSONObject> rval = requestViaHttpGet( requestObject );
         long endTime = System.currentTimeMillis();
-//	System.out.println( "... done @ " + WikiTreeApiUtilities.formatStandardMs( new Date() ) );
 
         synchronized ( s_innerRequestStats ) {
 
             double delta = ( endTime - startTime ) / 1000.0;
             s_innerRequestStats.sample( delta );
-//	    System.out.println( "delta = " + delta );
 
         }
 
@@ -997,8 +920,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
             connection.setRequestProperty( "Accept", "application/json" );
             if ( !"login".equals( requestObject.get( "action" ) ) && _loginCookies != null ) {
 
-//		System.out.println( "it's not a login attempt and we have cookies" );
-
                 StringBuilder sb = new StringBuilder();
                 String semiColon = "";
                 for ( String cookie : _loginCookies ) {
@@ -1009,8 +930,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
                 }
 
                 connection.addRequestProperty( "Cookie", sb.toString() );
-
-//		System.out.println( "done adding in cookies" );
 
             }
 
@@ -1049,20 +968,10 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
                         String resultString = (String)loginObject.get( "result" );
                         if ( "Success".equals( resultString ) ) {
 
-//			    System.out.println( "login worked!" );
-
                             Collection<String> cookies = connection.getHeaderFields().get( "Set-Cookie" );
                             if ( cookies != null ) {
 
                                 _loginCookies = new Vector<>( cookies );
-
-//				for ( String cookie : _loginCookies ) {
-//
-//				    System.out.println( "cookie:  " + WikiTreeApiUtilities.enquoteJavaString( cookie ) );
-//
-//				}
-//
-//				System.out.println( "done printing cookies" );
 
                             }
 
@@ -1099,65 +1008,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         }
 
     }
-
-//    private JSONObject requestViaJsonPost( JSONObject requestObject )
-//            throws IOException, ParseException {
-//
-//        String requestString = JSONObject.toJSONString( requestObject );
-//
-//        String what = "initializing connection";
-//
-//        try {
-//
-//            URL serverUrl = new URL( _baseServerUrlString );
-//
-//            URLConnection urlConnection = serverUrl.openConnection();
-//            HttpURLConnection connection = (HttpURLConnection)urlConnection;
-//            connection.setDoOutput( true );
-//            connection.setDoInput( true );
-//            connection.setRequestProperty( "Content-Type", "application/json; charset=UTF-8" );
-//            connection.setRequestProperty( "Accept", "application/json" );
-//            connection.setRequestMethod( "POST" );
-//
-//            what = "posting request";
-//
-//            try ( OutputStream writer = connection.getOutputStream() ) {
-//
-//                writer.write( ( requestString + '\n' ).getBytes( "UTF-8" ) );
-//                writer.flush();
-//
-//            } finally {
-//
-//                System.out.println( "writer closed" );
-//
-//            }
-//
-//            what = "getting response";
-//
-//            @SuppressWarnings("UnnecessaryLocalVariable")
-//            Object rval = WikiTreeApiUtilities.readResponse( connection, true );
-//
-//            if ( rval == null || rval instanceof JSONObject ) {
-//
-//                return (JSONObject)rval;
-//
-//            } else {
-//
-//                throw new ReallyBadNewsError( "requestViaJsonPost:  expected a JSONObject, got this instead:  " + rval );
-//
-//            }
-//
-//        } catch ( IOException | ParseException | RuntimeException e ) {
-//
-//            System.err.println( "unable to issue POST to \"" + _baseServerUrlString + "\" (doing " + what + "):  " + what );
-//
-//            e.printStackTrace();
-//
-//            throw e;
-//
-//        }
-//
-//    }
 
     public static StatisticsAccumulator getTimingStats() {
 
