@@ -544,6 +544,7 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      @throws IOException
      @throws ParseException
      */
+
     @SuppressWarnings("unchecked")
     @NotNull
     public Optional<JSONObject> getProfile( final WikiTreeId key )

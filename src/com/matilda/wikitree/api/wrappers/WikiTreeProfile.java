@@ -25,9 +25,7 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
     private final JSONObject _originalJSONObject;
 
     protected WikiTreeProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation ) throws WikiTreeRequestFailedException {
-        super( findProfile( jsonObject, profileLocation )
-
-        );
+        super( findProfile( jsonObject, profileLocation ) );
 
         _originalJSONObject = jsonObject;
 

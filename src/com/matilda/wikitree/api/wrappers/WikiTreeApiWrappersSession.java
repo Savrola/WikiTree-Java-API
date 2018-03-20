@@ -10,6 +10,7 @@ import com.matilda.wikitree.api.jsonclient.WikiTreeApiJsonSession;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
 import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -414,6 +415,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
+    @SuppressWarnings("Duplicates")
     public WikiTreeProfile getProfile( final WikiTreeId key )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
@@ -435,6 +437,7 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
+    @SuppressWarnings("Duplicates")
     public WikiTreeProfile getProfile( final long id )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
@@ -478,17 +481,35 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
     //
     //    }
 
-    public WikiTreePersonProfile getPersonProfile( final WikiTreeId key )
+    /**
+     Get a person's profile via their {@link WikiTreeId}.
+     @param wikiTreeId the person's {@code WikiTreeId}.
+     @return a {@link WikiTreePersonProfile} containing the person's profile if it exists; {@code null} otherwise.
+     @throws IOException when something goes wrong in network land.
+     @throws ParseException when the result of the request to the WikiTree server cannot be interpreted at this end.
+     @throws WikiTreeRequestFailedException if the request fails.
+     */
+
+    @Nullable
+    public WikiTreePersonProfile getPersonProfile( final WikiTreeId wikiTreeId )
             throws IOException, ParseException, WikiTreeRequestFailedException {
 
-        WikiTreeProfile profile = getProfile( key );
-        if ( profile == null || profile instanceof WikiTreePersonProfile ) {
+        WikiTreeProfile profile = getProfile( wikiTreeId );
+        if ( profile == null ) {
 
-            return (WikiTreePersonProfile)profile;
+            return null;
 
         } else {
 
-            throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  key \"" + key + "\" refers to a Space, not a Person" );
+            if ( profile instanceof WikiTreePersonProfile ) {
+
+                return (WikiTreePersonProfile)profile;
+
+            } else {
+
+                throw new IllegalArgumentException( "WikiTreeApiWrappersSession.getPersonProfile:  wikiTreeId \"" + wikiTreeId + "\" refers to a Space, not a Person" );
+
+            }
 
         }
 
