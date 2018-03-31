@@ -499,7 +499,7 @@ public class WikiTreeApiUtilities {
 
     public static String constructGetPersonFieldsString( final @NotNull SortedSet<String> includedFields ) {
 
-        return constructGetPersonFieldsString( includedFields.toArray( new String[includedFields.size()] ) );
+        return constructGetPersonFieldsString( includedFields.toArray( new String[0] ) );
 
     }
 
