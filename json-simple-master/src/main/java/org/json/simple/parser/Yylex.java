@@ -678,7 +678,7 @@ class Yylex {
                 case 33:
                     break;
                 case 1: {
-                    throw new ParseException( yychar, ParseException.ERROR_UNEXPECTED_CHAR, new Character( yycharat( 0 ) ) );
+                    throw new ParseException( yychar, ParseException.ERROR_UNEXPECTED_CHAR, Character.valueOf(  yycharat( 0 ) ) );
                 }
                 case 34:
                     break;

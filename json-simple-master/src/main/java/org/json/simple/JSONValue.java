@@ -37,6 +37,7 @@ public class JSONValue {
 	 * {@code null}; please use {@link JSONValue#parseWithException(Reader)}
 	 * instead
 	 */
+	@Deprecated
 	public static Object parse(Reader in){
 		try{
 			JSONParser parser=new JSONParser();
@@ -67,6 +68,7 @@ public class JSONValue {
 	 * {@code null}; please use {@link JSONValue#parseWithException(String)}
 	 * instead
 	 */
+	@Deprecated
 	public static Object parse(String s){
 		StringReader in=new StringReader(s);
 		return parse(in);

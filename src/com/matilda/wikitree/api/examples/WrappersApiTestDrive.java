@@ -110,6 +110,14 @@ public class WrappersApiTestDrive {
             WikiTreePersonProfile bouletManagerProfile =
                     request.getPersonProfile( new WikiTreeId( "Boulet-169" ) );
             WikiTreeApiUtilities.prettyPrintJsonThing( "boulet manager profile", bouletManagerProfile );
+            if ( bouletProfile == null ) {
+
+                throw new ReallyBadNewsError(
+                        "bouletProfile is null - you probably need to change this section to use your WikiTree id)"
+                );
+
+            }
+
             WikiTreePersonProfile bouletManagerPerson = request.getPerson( bouletProfile.getManagerPersonId() );
             WikiTreeApiUtilities.prettyPrintJsonThing( "boulet manager person", bouletManagerPerson );
 
@@ -122,7 +130,10 @@ public class WrappersApiTestDrive {
                             bouletProfile.getManagerPersonId(),
                             "Id,Name,Derived.ShortName,HasChildren,NoChildren,Children"
                     );
-            WikiTreeApiUtilities.prettyPrintJsonThing( "condensed with children boulet manager person", profileManagerCondensedWithChildren );
+            WikiTreeApiUtilities.prettyPrintJsonThing(
+                    "condensed with children boulet manager person",
+                    profileManagerCondensedWithChildren
+            );
 
             WikiTreePersonProfile bouletViaLimitedGetPerson = request.getPerson(
                     new WikiTreeId( "Boulet-169" ),
@@ -156,10 +167,10 @@ public class WrappersApiTestDrive {
             WikiTreeApiUtilities.prettyPrintJsonThing( "Boutin=148's ancestors", onilBoutinAncestors );
             System.out.println( "Boutin-148's ancestors is " + onilBoutinAncestors );
 
-            System.out.println(
-                    "timing stats for actual calls to remote WikiTree API server:  " +
-                    WikiTreeApiWrappersSession.getTimingStats()
-            );
+//            System.out.println(
+//                    "timing stats for actual calls to remote WikiTree API server:  " +
+//                    WikiTreeApiWrappersSession.getTimingStats()
+//            );
 
             System.out.println( "done" );
 

@@ -8,7 +8,7 @@ import com.matilda.wikitree.api.WikiTreeApiClient;
 import com.matilda.wikitree.api.exceptions.WikiTreeRequestFailedException;
 import com.matilda.wikitree.api.jsonclient.WikiTreeApiJsonSession;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
-import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
+//import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
@@ -668,11 +668,11 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
 
     }
 
-    public static StatisticsAccumulator getTimingStats() {
-
-        return WikiTreeApiJsonSession.getTimingStats();
-
-    }
+//    public static StatisticsAccumulator getTimingStats() {
+//
+//        return WikiTreeApiJsonSession.getTimingStats();
+//
+//    }
 
     public String toString() {
 
