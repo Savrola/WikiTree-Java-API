@@ -8,7 +8,6 @@ import com.matilda.wikitree.api.WikiTreeApiClient;
 import com.matilda.wikitree.api.exceptions.WikiTreeRequestFailedException;
 import com.matilda.wikitree.api.jsonclient.WikiTreeApiJsonSession;
 import com.matilda.wikitree.api.util.WikiTreeApiUtilities;
-//import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
@@ -17,6 +16,8 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.SortedSet;
+
+//import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
 
 /**
  An API that operates as a layer on top of the API provided by {@link WikiTreeApiJsonSession}.

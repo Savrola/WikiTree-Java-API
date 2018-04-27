@@ -2,6 +2,7 @@
 
 package org.json.simple.parser;
 
+@SuppressWarnings("ClassHasNoToStringMethod")
 class Yylex {
 
     /**
