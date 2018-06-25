@@ -18,11 +18,9 @@ import java.util.StringTokenizer;
 public class ItemList {
 	private String sp=",";
 	final List items=new ArrayList();
-	
-	
+
 	public ItemList(){}
-	
-	
+
 	public ItemList( final String s){
 		this.split(s,sp,items);
 	}

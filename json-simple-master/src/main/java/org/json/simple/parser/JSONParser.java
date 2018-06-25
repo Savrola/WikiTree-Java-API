@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Parser for JSON text. Please note that JSONParser is NOT thread-safe.
  * 

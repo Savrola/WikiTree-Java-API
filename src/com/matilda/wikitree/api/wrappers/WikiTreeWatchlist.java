@@ -65,7 +65,6 @@ public class WikiTreeWatchlist extends WikiTreeWrapper {
         _offsetParam = offsetParam;
         _orderParam = orderParam;
 
-
         JSONArray watchlist = ( (JSONArray)WikiTreeApiUtilities.getMandatoryJsonValue( JSONArray.class, resultObject, "watchlist" ) );
         if ( watchlist.isEmpty() ) {
 

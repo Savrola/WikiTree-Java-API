@@ -167,11 +167,6 @@ public class WrappersApiTestDrive {
             WikiTreeApiUtilities.prettyPrintJsonThing( "Boutin=148's ancestors", onilBoutinAncestors );
             System.out.println( "Boutin-148's ancestors is " + onilBoutinAncestors );
 
-//            System.out.println(
-//                    "timing stats for actual calls to remote WikiTree API server:  " +
-//                    WikiTreeApiWrappersSession.getTimingStats()
-//            );
-
             System.out.println( "done" );
 
         } catch (

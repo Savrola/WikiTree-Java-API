@@ -20,8 +20,7 @@ import java.util.Map;
 public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAware{
 	
 	private static final long serialVersionUID = -503443796854799292L;
-	
-	
+
 	public JSONObject() {
 		super();
 	}
@@ -35,7 +34,6 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
 	public JSONObject( final Map map) {
 		super(map);
 	}
-
 
     /**
      * Encode a map into JSON text and write it to out.

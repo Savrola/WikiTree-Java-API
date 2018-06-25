@@ -324,7 +324,6 @@ public class WikiTreeApiUtilities {
      In case you're wondering why 1957-10-04 was used as the example date, the launch of Sputnik on that date marked the start of the space age.
      */
 
-
     public static String formatDate( final @NotNull String dateString ) {
 
         return formatDate( dateString, false, true );
@@ -1065,7 +1064,6 @@ public class WikiTreeApiUtilities {
                     // The primary benefit of this in the immediate sense is that the code above which prefixes WTPP instances
                     // with their profile type will properly prefix these relatives' instances. There is a potential secondary
                     // benefit should we insert more special handling of WTPP instances in this set of pretty-printing methods.
-
 
                     boolean hasRelatives = false;
 

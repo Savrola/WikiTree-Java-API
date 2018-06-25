@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Vector;
 
-//import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
-
 /**
  A purely(?) JSON-based Java implementation of the WikiTree API.
  <p/>See <a href="https://www.wikitree.com/wiki/Help:API_Documentation">https://www.wikitree.com/wiki/Help:API_Documentation</a>
@@ -41,8 +39,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
      */
 
     public static final String DEFAULT_BASE_SERVER_URL_STRING = "https://apps.wikitree.com/api.php";
-
-//    private static final StatisticsAccumulator s_innerRequestStats = new StatisticsAccumulator( "ms" );
 
     private static int _miniServerPort;
 
@@ -871,13 +867,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         Optional<JSONObject> rval = requestViaHttpGet( requestObject );
         long endTime = System.currentTimeMillis();
 
-//        synchronized ( s_innerRequestStats ) {
-//
-//            double delta = ( endTime - startTime ) / 1000.0;
-//            s_innerRequestStats.sample( delta );
-//
-//        }
-
         return rval;
 
     }
@@ -1010,12 +999,6 @@ public class WikiTreeApiJsonSession implements WikiTreeApiClient {
         }
 
     }
-
-//    public static StatisticsAccumulator getTimingStats() {
-//
-//        return s_innerRequestStats;
-//
-//    }
 
     public String toString() {
 

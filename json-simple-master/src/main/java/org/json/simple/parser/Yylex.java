@@ -81,7 +81,6 @@ class Yylex {
         return j;
     }
 
-
     /**
      Translates a state to a row index in the transition table
      */
@@ -310,7 +309,6 @@ class Yylex {
         return yychar;
     }
 
-
     /**
      Creates a new scanner
      There is also a java.io.InputStream version of this constructor.
@@ -353,7 +351,6 @@ class Yylex {
         }
         return map;
     }
-
 
     /**
      Refills the input buffer.
@@ -409,7 +406,6 @@ class Yylex {
         return true;
     }
 
-
     /**
      Closes the input stream.
      */
@@ -422,7 +418,6 @@ class Yylex {
             zzReader.close();
         }
     }
-
 
     /**
      Resets the scanner to read from a new input stream.
@@ -445,7 +440,6 @@ class Yylex {
         zzLexicalState = YYINITIAL;
     }
 
-
     /**
      Returns the current lexical state.
      */
@@ -453,7 +447,6 @@ class Yylex {
 
         return zzLexicalState;
     }
-
 
     /**
      Enters a new lexical state
@@ -465,7 +458,6 @@ class Yylex {
         zzLexicalState = newState;
     }
 
-
     /**
      Returns the text matched by the current regular expression.
      */
@@ -473,7 +465,6 @@ class Yylex {
 
         return new String( zzBuffer, zzStartRead, zzMarkedPos - zzStartRead );
     }
-
 
     /**
      Returns the character at position <tt>pos</tt> from the
@@ -490,7 +481,6 @@ class Yylex {
         return zzBuffer[zzStartRead + pos];
     }
 
-
     /**
      Returns the length of the matched text region.
      */
@@ -498,7 +488,6 @@ class Yylex {
 
         return zzMarkedPos - zzStartRead;
     }
-
 
     /**
      Reports an error that occured while scanning.
@@ -526,7 +515,6 @@ class Yylex {
         throw new Error( message );
     }
 
-
     /**
      Pushes the specified amount of characters back into the input stream.
      <p>
@@ -543,7 +531,6 @@ class Yylex {
 
         zzMarkedPos -= number;
     }
-
 
     /**
      Resumes scanning until the next regular expression is matched,
@@ -578,7 +565,6 @@ class Yylex {
             zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
 
             zzState = ZZ_LEXSTATE[zzLexicalState];
-
 
             zzForAction:
             {
@@ -768,6 +754,5 @@ class Yylex {
             }
         }
     }
-
 
 }

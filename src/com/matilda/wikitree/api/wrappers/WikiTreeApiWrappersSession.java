@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.SortedSet;
 
-//import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
-
 /**
  An API that operates as a layer on top of the API provided by {@link WikiTreeApiJsonSession}.
  <p/>
@@ -319,7 +317,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
         return rval;
 
     }
-
 
     /**
      Request information about a specified person (someone with a WikiTree profile).
@@ -668,12 +665,6 @@ public class WikiTreeApiWrappersSession implements WikiTreeApiClient {
         }
 
     }
-
-//    public static StatisticsAccumulator getTimingStats() {
-//
-//        return WikiTreeApiJsonSession.getTimingStats();
-//
-//    }
 
     public String toString() {
 

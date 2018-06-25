@@ -402,7 +402,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
         }
 
-
     }
 
     public int getChildCount() {
@@ -435,7 +434,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
             return Optional.empty();
 
         }
-
 
     }
 

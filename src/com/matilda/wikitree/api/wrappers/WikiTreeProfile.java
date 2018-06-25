@@ -34,7 +34,6 @@ public abstract class WikiTreeProfile extends WikiTreeWrapper {
     private static JSONObject findProfile( final @NotNull JSONObject jsonObject, final String[] profileLocation )
             throws WikiTreeRequestFailedException {
 
-
         // Apologies for using an inline-if in a call to {@code super()}.
         // This seems cleaner than the alternative of passing something arbitrary to this {@code super()} call and then
         // fixing things up later if we guessed wrong.

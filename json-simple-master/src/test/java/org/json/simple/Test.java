@@ -76,8 +76,7 @@ public class Test extends TestCase{
 			assertEquals(ParseException.ERROR_UNEXPECTED_TOKEN, pe.getErrorType());
 			assertEquals(8, pe.getPosition());
 		}
-		
-		
+
 		s="{\"name";
 		try{
 			obj = parser.parse(s);
@@ -86,8 +85,7 @@ public class Test extends TestCase{
 			assertEquals(ParseException.ERROR_UNEXPECTED_TOKEN, pe.getErrorType());
 			assertEquals(6, pe.getPosition());
 		}
-		
-		
+
 		s = "[[null, 123.45, \"a\\\tb c\"}, true]";
 		try{
 			parser.parse(s);
@@ -243,7 +241,6 @@ public class Test extends TestCase{
                 return true;
             }
 
-            
             public boolean startObject() throws ParseException, IOException {
                 return true;
             }
