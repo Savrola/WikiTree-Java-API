@@ -64,6 +64,7 @@ public class VerySimpleWrappersApiExample {
 
             churchillsProfile = session.getPerson( new WikiTreeId( "Churchill-4" ) );
             long churchillPersonId = churchillsProfile.getPersonId();
+            System.out.println( "W.S. Churchill's PersonId is " + churchillPersonId );
             WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile via Churchill-4", churchillsProfile );
 
             // Get Winston S. Churchill's person profile via a getProfile request and print that out.
@@ -71,6 +72,11 @@ public class VerySimpleWrappersApiExample {
             // doesn't also get any of the target person's relatives.
 
             churchillsProfile = session.getPersonProfile( new WikiTreeId( "Churchill-4" ) );
+            if ( churchillsProfile == null ) {
+
+                throw new IllegalArgumentException( "churchillsProfile should not be null here" );
+
+            }
             WikiTreeApiUtilities.prettyPrintJsonThing( "Winston S. Churchill's person profile", churchillsProfile );
 
             // Get Winston's biography.
