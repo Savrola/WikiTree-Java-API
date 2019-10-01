@@ -60,6 +60,14 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
         }
 
+        _isIdName = validateWikiTreeIdString( wikiTreeIdString );
+
+        _wikiTreeIdString = wikiTreeIdString;
+
+    }
+
+    private static boolean validateWikiTreeIdString( @NotNull final String wikiTreeIdString ) {
+
         boolean isName = WikiTreeApiUtilities.isValidWikiTreeIdPersonName( wikiTreeIdString );
         boolean isSpaceName = WikiTreeApiUtilities.isValidWikiTreeSpaceName( wikiTreeIdString );
 
@@ -82,9 +90,23 @@ public class WikiTreeId implements Comparable<WikiTreeId> {
 
         }
 
-        _isIdName = isName;
+        return isName;
 
-        _wikiTreeIdString = wikiTreeIdString;
+    }
+
+    public static boolean isValidWikiTreeIdString( @NotNull final String wikiTreeIdString ) {
+
+        try {
+
+            validateWikiTreeIdString( wikiTreeIdString );
+
+        } catch ( IllegalArgumentException | ReallyBadNewsError e ) {
+
+            return false;
+
+        }
+
+        return true;
 
     }
 

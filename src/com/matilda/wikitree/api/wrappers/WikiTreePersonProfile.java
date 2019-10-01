@@ -73,7 +73,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     public enum ProfileType {
 
         /**
-         The target person of a {@code getPerson} request that asked all fields ("*").
+         The target person of a {@code getPerson} request that asked for all fields ("*").
          */
 
         PRIMARY_PERSON,
@@ -713,7 +713,7 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public Object getMandatoryValue( final @NotNull String jsonKey ) {
 
-        @SuppressWarnings("UnnecessaryLocalVariable") Object obj = get( jsonKey );
+        Object obj = get( jsonKey );
 
         return obj;
 
@@ -737,7 +737,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getShortName() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String nameObj = getValue(
                 SHORT_NAME,
                 () -> WikiTreePersonProfile.this.getWikiTreeId().getValueString()
@@ -756,7 +755,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getLongName() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String nameObj = getValue(
                 LONG_NAME,
                 this::getShortName
@@ -834,7 +832,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getFirstName() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String firstName = getValue(
                 FIRST_NAME,
                 this::getShortName
@@ -867,7 +864,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getMarriageDate() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String marriageDate = (String)getMandatoryValue( MARRIAGE_DATE );
 
         return marriageDate;
@@ -897,7 +893,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getMarriageLocation() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String marriageDate = (String)getMandatoryValue( MARRIAGE_LOCATION );
 
         return marriageDate;
@@ -913,7 +908,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getLastNameAtBirth() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String lastNameAtBirth = (String)getMandatoryValue( LAST_NAME_AT_BIRTH );
 
         return lastNameAtBirth;
@@ -980,7 +974,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getBirthLocation() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String birthLocation = (String)getMandatoryValue( BIRTH_LOCATION );
 
         return birthLocation;
@@ -1009,7 +1002,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public String getBirthDate() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String birthDate = (String)getMandatoryValue( BIRTH_DATE );
 
         return birthDate;
@@ -1038,7 +1030,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
 
     public String getDeathDate() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String deathDate = (String)getMandatoryValue( DEATH_DATE );
 
         return deathDate;
@@ -1068,7 +1059,6 @@ public class WikiTreePersonProfile extends WikiTreeProfile {
     @NotNull
     public String getDeathLocation() {
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
         String deathLocation = (String)getMandatoryValue( DEATH_LOCATION );
 
         return deathLocation;
